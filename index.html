@@ -1059,25 +1059,45 @@ html, body {
   </div>
 </section>
 
+<!-- Seccion puntos -->
+
+<!-- ⭐ SECCIÓN MIS PUNTOS -->
 <section id="puntos-section" class="section-content hidden min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 py-20">
-  <div class="max-w-xl mx-auto text-center">
-    <h2 class="text-3xl font-extrabold text-gray-800 mb-6">
+  <div class="max-w-xl mx-auto text-center px-4">
+    <h2 class="text-3xl font-extrabold text-gray-800 mb-4">
       ⭐ Programa Estrellas BMarket
     </h2>
     <p class="text-gray-600 mb-8">
-      Ingresa tu DNI para ver cuántas estrellas has acumulado y tus beneficios.
+      Acumula puntos con cada compra y desbloquea beneficios exclusivos 🎁<br>
+      Ingresa tu DNI para ver tus estrellas actuales.
     </p>
-    <div class="flex justify-center mb-6">
+
+    <!-- 🔹 Campo de búsqueda -->
+    <div class="flex justify-center mb-8">
       <input id="dni-cliente" type="text" placeholder="Ingresa tu DNI"
-        class="border border-gray-300 rounded-l-lg px-4 py-2 w-64 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+        class="border border-gray-300 rounded-l-lg px-4 py-2 w-64 focus:ring-2 focus:ring-pink-400 focus:outline-none text-center">
       <button onclick="consultarPuntos()"
-        class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-r-lg transition">
+        class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-r-lg transition font-medium">
         Consultar ⭐
       </button>
     </div>
-    <div id="resultado-puntos" class="mt-8"></div>
+
+    <!-- 🔹 Resultado -->
+    <div id="resultado-puntos" class="mt-6"></div>
+
+    <!-- 🔹 Leyenda de beneficios -->
+    <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">🎯 Beneficios por estrellas acumuladas</h3>
+      <ul class="text-gray-600 text-sm space-y-2">
+        <li>🌟 <strong>3 estrellas:</strong> Envío gratis en tu próxima compra.</li>
+        <li>💎 <strong>6 estrellas:</strong> 15% de descuento en cualquier producto.</li>
+        <li>🎉 <strong>9 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
+      </ul>
+      <p class="text-xs text-gray-400 mt-4 text-center">* Las estrellas se acumulan automáticamente con tus compras.</p>
+    </div>
   </div>
 </section>
+
 
 <!-- Sección Contacto -->
 <section id="contacto-section" class="section-content hidden py-16 bg-gray-50">
@@ -7198,41 +7218,58 @@ async function consultarPuntos() {
   const cont = document.getElementById("resultado-puntos");
 
   if (!dni) {
-    cont.innerHTML = `<p class="text-gray-500">Por favor ingresa tu DNI.</p>`;
+    cont.innerHTML = `<p class="text-gray-500">Por favor, ingresa tu DNI.</p>`;
     return;
   }
 
-  cont.innerHTML = `<div class="animate-pulse text-pink-500">Consultando...</div>`;
+  cont.innerHTML = `
+    <div class="flex flex-col items-center justify-center py-10 animate-pulse text-pink-500">
+      <div class="w-10 h-10 mb-3 border-4 border-pink-300 border-t-pink-500 rounded-full animate-spin"></div>
+      <p>Consultando tus estrellas...</p>
+    </div>
+  `;
 
   try {
     const res = await fetch(`/.netlify/functions/getPuntos?dni=${dni}`);
     const data = await res.json();
 
     if (data.estado === "No encontrado" || data.error) {
-      cont.innerHTML = `<p class="text-red-500 font-semibold">❌ Cliente no encontrado.</p>`;
+      cont.innerHTML = `<p class="text-red-500 font-semibold">❌ No se encontró ningún cliente con ese DNI.</p>`;
       return;
     }
 
-    // Barra de progreso de estrellas
+    // 📊 Barra de progreso visual
     const maxEstrellas = 9;
     const progreso = Math.min((data.estrellas / maxEstrellas) * 100, 100);
 
+    // ⭐ Render bonito
     cont.innerHTML = `
-      <div class="bg-white rounded-xl shadow-lg p-6 max-w-md mx-auto">
-        <h3 class="text-xl font-bold text-gray-800 mb-2">${data.nombre}</h3>
-        <p class="text-gray-500 mb-4">DNI: ${data.dni}</p>
+      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto relative overflow-hidden transition-all duration-500 hover:shadow-pink-200">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-pink-100 rounded-full opacity-40"></div>
 
-        <div class="relative w-full h-3 bg-gray-200 rounded-full mb-3">
-          <div class="absolute left-0 top-0 h-3 bg-pink-400 rounded-full transition-all duration-700" style="width: ${progreso}%"></div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
+        <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
+
+        <div class="mb-4">
+          <div class="w-full bg-gray-200 rounded-full h-3 relative">
+            <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width: ${progreso}%"></div>
+          </div>
+          <p class="text-sm text-gray-500 mt-2">${data.estrellas} de 9 ⭐</p>
         </div>
-        <p class="text-sm text-gray-500 mb-3">${data.estrellas} de 9 ⭐</p>
 
         <div class="text-lg font-semibold text-pink-600 mb-3">${data.beneficio}</div>
-        <p class="text-gray-400 text-sm">Última actualización: ${data.fecha}</p>
+
+        <div class="flex justify-center gap-1 mb-4">
+          ${[...Array(9)].map((_, i) =>
+            `<span class="text-2xl ${i < data.estrellas ? 'text-yellow-400' : 'text-gray-300'}">★</span>`
+          ).join('')}
+        </div>
+
+        <p class="text-sm text-gray-400">Última actualización: ${data.fecha}</p>
       </div>
     `;
   } catch (err) {
-    cont.innerHTML = `<p class="text-red-500">Error al consultar puntos.</p>`;
+    cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
   }
 }
