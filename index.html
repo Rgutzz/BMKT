@@ -373,6 +373,7 @@ html, body {
             </div>
 	<button onclick="showSection('Sale-page')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Sale</button>
   <button onclick="showSection('seguimiento')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Seguimiento</button>
+  <button onclick="showSection('puntos')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Mis Puntos ⭐</button>
   <button onclick="showSection('contacto')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Contáctanos</button>
         </div>
  	    </div>
@@ -1074,7 +1075,7 @@ html, body {
 
     <!-- 🔹 Campo de búsqueda -->
     <div class="flex justify-center mb-8">
-      <input id="dni-cliente" type="text" placeholder="Ingresa tu DNI"
+      <input id="dni-cliente" type="number" placeholder="Ingresa tu DNI"
         class="border border-gray-300 rounded-l-lg px-4 py-2 w-64 focus:ring-2 focus:ring-pink-400 focus:outline-none text-center">
       <button onclick="consultarPuntos()"
         class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-r-lg transition font-medium">
@@ -7195,24 +7196,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <script>
-// 🔹 Cierra el menú móvil solo si el botón NO abre un submenú
-document.querySelectorAll("#mobile-menu button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const onclickValue = btn.getAttribute("onclick") || "";
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("dni-cliente");
+  const boton = document.querySelector("button[onclick='consultarPuntos()']");
 
-    // Si el botón tiene 'showSection' => cierra el menú
-    // Si tiene 'toggleMobileRopaMenu' o 'toggleMobileAccesoriosMenu' => NO cerrar
-    if (
-      onclickValue.includes("showSection(") &&
-      !onclickValue.includes("toggleMobileRopaMenu") &&
-      !onclickValue.includes("toggleMobileAccesoriosMenu")
-    ) {
-      document.getElementById("mobile-menu").classList.add("hidden");
+  // 🔹 Ejecutar con Enter (PC y móvil)
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      input.blur(); // 🔸 Oculta teclado en móviles
+      consultarPuntos();
     }
   });
+
+  // 🔹 Ocultar teclado también cuando se presiona el botón en móviles
+  boton.addEventListener("click", () => {
+    input.blur();
+    consultarPuntos();
+  });
 });
-</script>
-<script>
+
 async function consultarPuntos() {
   const dni = document.getElementById("dni-cliente").value.trim();
   const cont = document.getElementById("resultado-puntos");
@@ -7242,9 +7245,14 @@ async function consultarPuntos() {
     const maxEstrellas = 9;
     const progreso = Math.min((data.estrellas / maxEstrellas) * 100, 100);
 
-    // ⭐ Render bonito
+    // 🌈 Color dinámico según nivel
+    let bgColor = "bg-white";
+    if (data.estrellas >= 9) bgColor = "bg-gradient-to-r from-yellow-100 to-yellow-50";
+    else if (data.estrellas >= 6) bgColor = "bg-gradient-to-r from-pink-100 to-pink-50";
+    else if (data.estrellas >= 3) bgColor = "bg-gradient-to-r from-rose-100 to-white";
+
     cont.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto relative overflow-hidden transition-all duration-500 hover:shadow-pink-200">
+      <div class="${bgColor} rounded-2xl shadow-lg p-6 max-w-md mx-auto relative overflow-hidden transition-all duration-500 hover:shadow-pink-200">
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-pink-100 rounded-full opacity-40"></div>
 
         <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
