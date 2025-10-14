@@ -1,6 +1,6 @@
-const fetch = require("node-fetch");
+// netlify/functions/getPuntos.js
 
-exports.handler = async (event) => {
+export async function handler(event) => {
   const SHEET_ID = "14JOAkWEe5IzURpCwchlYQhzWkROL66ghDfKMFhl2-nQ";
   const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
   const RANGE = "Puntos!A:E"; // <-- hoja "Puntos"
