@@ -297,6 +297,7 @@ html, body {
                     </div>
                     <button onclick="showSection('Sale-page')" class="nav-link text-gray-700 hover:text-[#cc9999] font-medium transition-colors">Sale</button>
                     <button onclick="showSection('seguimiento')" class="nav-link text-gray-700 hover:text-[#cc9999] font-medium transition-colors">Seguimiento</button>
+                    <button onclick="showSection('puntos')" class="nav-link text-gray-700 hover:text-[#cc9999] font-medium transition-colors">Mis Puntos ⭐</button>
             <button onclick="showSection('contacto')" class="nav-link text-gray-700 hover:text-[#cc9999] font-medium transition-colors">Contáctanos</button>
                 </div>  
 
@@ -1055,6 +1056,26 @@ html, body {
 
     <!-- Resultado -->
     <div id="resultado-seguimiento" class="mt-8 text-center"></div>
+  </div>
+</section>
+
+<section id="puntos-section" class="section-content hidden min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 py-20">
+  <div class="max-w-xl mx-auto text-center">
+    <h2 class="text-3xl font-extrabold text-gray-800 mb-6">
+      ⭐ Programa Estrellas BMarket
+    </h2>
+    <p class="text-gray-600 mb-8">
+      Ingresa tu DNI para ver cuántas estrellas has acumulado y tus beneficios.
+    </p>
+    <div class="flex justify-center mb-6">
+      <input id="dni-cliente" type="text" placeholder="Ingresa tu DNI"
+        class="border border-gray-300 rounded-l-lg px-4 py-2 w-64 focus:ring-2 focus:ring-pink-400 focus:outline-none">
+      <button onclick="consultarPuntos()"
+        class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-r-lg transition">
+        Consultar ⭐
+      </button>
+    </div>
+    <div id="resultado-puntos" class="mt-8"></div>
   </div>
 </section>
 
@@ -7170,6 +7191,51 @@ document.querySelectorAll("#mobile-menu button").forEach(btn => {
     }
   });
 });
+</script>
+<script>
+async function consultarPuntos() {
+  const dni = document.getElementById("dni-cliente").value.trim();
+  const cont = document.getElementById("resultado-puntos");
+
+  if (!dni) {
+    cont.innerHTML = `<p class="text-gray-500">Por favor ingresa tu DNI.</p>`;
+    return;
+  }
+
+  cont.innerHTML = `<div class="animate-pulse text-pink-500">Consultando...</div>`;
+
+  try {
+    const res = await fetch(`/.netlify/functions/getPuntos?dni=${dni}`);
+    const data = await res.json();
+
+    if (data.estado === "No encontrado" || data.error) {
+      cont.innerHTML = `<p class="text-red-500 font-semibold">❌ Cliente no encontrado.</p>`;
+      return;
+    }
+
+    // Barra de progreso de estrellas
+    const maxEstrellas = 9;
+    const progreso = Math.min((data.estrellas / maxEstrellas) * 100, 100);
+
+    cont.innerHTML = `
+      <div class="bg-white rounded-xl shadow-lg p-6 max-w-md mx-auto">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">${data.nombre}</h3>
+        <p class="text-gray-500 mb-4">DNI: ${data.dni}</p>
+
+        <div class="relative w-full h-3 bg-gray-200 rounded-full mb-3">
+          <div class="absolute left-0 top-0 h-3 bg-pink-400 rounded-full transition-all duration-700" style="width: ${progreso}%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mb-3">${data.estrellas} de 9 ⭐</p>
+
+        <div class="text-lg font-semibold text-pink-600 mb-3">${data.beneficio}</div>
+        <p class="text-gray-400 text-sm">Última actualización: ${data.fecha}</p>
+      </div>
+    `;
+  } catch (err) {
+    cont.innerHTML = `<p class="text-red-500">Error al consultar puntos.</p>`;
+    console.error(err);
+  }
+}
 </script>
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977b68c7d3a456b3',t:'MTc1NjYzMTU3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
