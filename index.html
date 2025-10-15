@@ -100,7 +100,7 @@ html, body {
 </style>
 <!-- Estilos acordeón -->
 <style>
-/* Ocultar flechas en inputs tipo number */
+/* Ocultar flechas en inputs tipo number (cross-browser) */
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -108,9 +108,12 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
+  appearance: textfield;       /* ✅ Propiedad estándar moderna */
+  -moz-appearance: textfield;  /* Firefox */
 }
 </style>
+
+
 <style>
 .ticker-container {
   overflow: hidden;
@@ -7205,7 +7208,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("dni-cliente");
@@ -7293,6 +7295,25 @@ async function consultarPuntos() {
   }
 }
 </script>
+<script>
+// 🔹 Cierra el menú móvil solo si el botón NO abre un submenú
+document.querySelectorAll("#mobile-menu button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const onclickValue = btn.getAttribute("onclick") || "";
+
+    // Si el botón tiene 'showSection' => cierra el menú
+    // Si tiene 'toggleMobileRopaMenu' o 'toggleMobileAccesoriosMenu' => NO cerrar
+    if (
+      onclickValue.includes("showSection(") &&
+      !onclickValue.includes("toggleMobileRopaMenu") &&
+      !onclickValue.includes("toggleMobileAccesoriosMenu")
+    ) {
+      document.getElementById("mobile-menu").classList.add("hidden");
+    }
+  });
+});
+</script>
+
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977b68c7d3a456b3',t:'MTc1NjYzMTU3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
