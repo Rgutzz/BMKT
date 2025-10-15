@@ -6252,13 +6252,15 @@ function showSection(sectionName) {
     document.getElementById('mobile-menu').classList.add('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    if (sectionName !== "puntos-section") {
-  const dniInput = document.getElementById("dni-cliente");
-  const resultado = document.getElementById("resultado-puntos");
-  if (dniInput) dniInput.value = "";
-  if (resultado) resultado.innerHTML = "";
-}
-if (sectionName !== "seguimiento-section") {
+    if (sectionName !== "puntos") {
+    const dniInput = document.getElementById("dni-cliente");
+    const resultadoPuntos = document.getElementById("resultado-puntos");
+    if (dniInput) dniInput.value = "";
+    if (resultadoPuntos) resultadoPuntos.innerHTML = "";
+  }
+
+  // 🧹 Limpiar "Seguimiento" si se cambia de sección
+  if (sectionName !== "seguimiento") {
     const codigoInput = document.getElementById("codigo-seguimiento");
     const resultadoSeg = document.getElementById("resultado-seguimiento");
     if (codigoInput) codigoInput.value = "";
