@@ -6251,6 +6251,19 @@ function showSection(sectionName) {
 
     document.getElementById('mobile-menu').classList.add('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (sectionName !== "puntos") {
+  const dniInput = document.getElementById("dni-cliente");
+  const resultado = document.getElementById("resultado-puntos");
+  if (dniInput) dniInput.value = "";
+  if (resultado) resultado.innerHTML = "";
+}
+if (sectionName !== "seguimiento") {
+    const codigoInput = document.getElementById("codigo-seguimiento");
+    const resultadoSeg = document.getElementById("resultado-seguimiento");
+    if (codigoInput) codigoInput.value = "";
+    if (resultadoSeg) resultadoSeg.innerHTML = "";
+  }
 }
 
 function toggleMobileMenu() {
