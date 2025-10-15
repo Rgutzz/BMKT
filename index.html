@@ -119,37 +119,41 @@ html, body {
 /* Tarjetas de progreso */
 .reward-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
   gap: 0.8rem;
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
+  justify-items: center;
 }
 .reward-card {
   background: #f9fafb;
   border-radius: 1rem;
-  padding: 0.75rem;
+  padding: 0.8rem 0.4rem;
+  width: 100%;
   text-align: center;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  position: relative;
 }
-.reward-card p { margin: 0.2rem 0; font-size: 0.85rem; }
+.reward-card p { margin: 0.2rem 0; font-size: 0.8rem; line-height: 1.2; }
 .reward-card span.icon { font-size: 1.6rem; display: block; }
 
-/* Activos (premios) */
+/* Activos (premios y pasos alcanzados) */
 .reward-card.active {
   background: linear-gradient(to bottom right, #ffe4ec, #fff);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(255,182,193,0.6);
+  transform: scale(1.03);
+  border: 2px solid #f9a8d4;
+  box-shadow: 0 0 8px rgba(249,168,212,0.5);
   font-weight: 600;
 }
 
 /* Intermedios */
 .reward-card.mid {
   background: #f1f5f9;
-  opacity: 0.9;
   font-weight: 500;
+  opacity: 0.9;
 }
 
-/* Estrella obtenida */
+/* Tarjetas alcanzadas (iluminadas progresivamente) */
 .reward-card.reached {
   border: 2px solid #f9a8d4;
   background: #fff5f8;
@@ -1162,7 +1166,7 @@ input[type=number] {
     <!-- 🔹 Resultado dinámico -->
     <div id="resultado-puntos" class="mt-6"></div>
 
-    <!-- 🔹 Leyenda de recompensas (fija) -->
+    <!-- 🔹 Leyenda de recompensas -->
     <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left">
       <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">
         🎯 Beneficios por estrellas acumuladas
@@ -7274,27 +7278,24 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("dni-cliente");
-  const boton = document.querySelector("button[onclick='consultarPuntos()']");
+// 🔹 Cierra el menú móvil solo si el botón NO abre un submenú
+document.querySelectorAll("#mobile-menu button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const onclickValue = btn.getAttribute("onclick") || "";
 
-  // 🔹 Ejecutar con Enter (PC y móvil)
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      input.blur(); // 🔸 Oculta teclado en móviles
-      consultarPuntos();
+    // Si el botón tiene 'showSection' => cierra el menú
+    // Si tiene 'toggleMobileRopaMenu' o 'toggleMobileAccesoriosMenu' => NO cerrar
+    if (
+      onclickValue.includes("showSection(") &&
+      !onclickValue.includes("toggleMobileRopaMenu") &&
+      !onclickValue.includes("toggleMobileAccesoriosMenu")
+    ) {
+      document.getElementById("mobile-menu").classList.add("hidden");
     }
-  });
-
-  // 🔹 Ocultar teclado también cuando se presiona el botón en móviles
-  boton.addEventListener("click", () => {
-    input.blur();
-    consultarPuntos();
   });
 });
 </script>
- 
+
 <!-- ⚡ Script -->
 <script>
 async function consultarPuntos() {
@@ -7324,7 +7325,7 @@ async function consultarPuntos() {
 
     // Renderizar la barra y las tarjetas
     cont.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto transition-all duration-500">
+      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto transition-all duration-500 overflow-hidden">
         <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
         <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
 
@@ -7338,39 +7339,36 @@ async function consultarPuntos() {
 
         <!-- 🎯 Niveles de progreso -->
         <div class="reward-grid">
-          <div class="reward-card ${estrellas>=1?'reached':''} mid">
-            <span class="icon">⭐</span>
-            <p>1</p>
-          </div>
-          <div class="reward-card ${estrellas>=2?'active':''}">
-            <span class="icon">🚚</span>
-            <p>2</p>
-            <p class="text-xs text-gray-500">Envío gratis</p>
-          </div>
-          <div class="reward-card ${estrellas>=3?'reached':''} mid">
-            <span class="icon">⭐</span>
-            <p>3</p>
-          </div>
-          <div class="reward-card ${estrellas>=4?'active':''}">
-            <span class="icon">💎</span>
-            <p>4</p>
-            <p class="text-xs text-gray-500">15 % desc.</p>
-          </div>
-          <div class="reward-card ${estrellas>=5?'reached':''} mid">
-            <span class="icon">⭐</span>
-            <p>5</p>
-          </div>
-          <div class="reward-card ${estrellas>=6?'active':''}">
-            <span class="icon">🎉</span>
-            <p>6</p>
-            <p class="text-xs text-gray-500">20 % VIP</p>
-          </div>
+          ${renderRewardCards(estrellas)}
         </div>
       </div>`;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
   }
+}
+
+// 🧩 Función para renderizar tarjetas con lógica de progreso visual
+function renderRewardCards(estrellas) {
+  const niveles = [
+    { n: 1, icon: "⭐", label: "" },
+    { n: 2, icon: "🚚", label: "Envío gratis" },
+    { n: 3, icon: "⭐", label: "" },
+    { n: 4, icon: "💎", label: "15 % desc." },
+    { n: 5, icon: "⭐", label: "" },
+    { n: 6, icon: "🎉", label: "20 % VIP" }
+  ];
+
+  return niveles.map(nivel => {
+    const reached = estrellas >= nivel.n ? "active" : "";
+    const mid = [1,3,5].includes(nivel.n) ? "mid" : "";
+    return `
+      <div class="reward-card ${mid} ${reached}">
+        <span class="icon">${nivel.icon}</span>
+        <p>${nivel.n}</p>
+        ${nivel.label ? `<p class="text-xs text-gray-500">${nivel.label}</p>` : ""}
+      </div>`;
+  }).join('');
 }
 </script>
 
