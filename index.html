@@ -6235,38 +6235,7 @@ const colorMap = {
             }
         };
 
-        // Funciones de navegación
-// =======================
-function showSection(sectionName) {
-    document.querySelectorAll('.section-content').forEach(section => {
-        section.classList.add('hidden');
-    });
-    document.getElementById(sectionName + '-section').classList.remove('hidden');
-    currentSection = sectionName;
-
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('text-purple-600', 'font-bold');
-        link.classList.add('text-gray-700');
-    });
-
-    document.getElementById('mobile-menu').classList.add('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    if (sectionName !== "puntos") {
-    const dniInput = document.getElementById("dni-cliente");
-    const resultadoPuntos = document.getElementById("resultado-puntos");
-    if (dniInput) dniInput.value = "";
-    if (resultadoPuntos) resultadoPuntos.innerHTML = "";
-  }
-
-  // 🧹 Limpiar "Seguimiento" si se cambia de sección
-  if (sectionName !== "seguimiento") {
-    const codigoInput = document.getElementById("codigo-seguimiento");
-    const resultadoSeg = document.getElementById("resultado-seguimiento");
-    if (codigoInput) codigoInput.value = "";
-    if (resultadoSeg) resultadoSeg.innerHTML = "";
-  }
-}
+        
 
 function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
@@ -6918,38 +6887,6 @@ carousel.addEventListener("scroll", () => updateFeaturedDots());
   });
 </script>
 <script>
-/* Reemplaza tu showSection existente por esta versión */
-function showSection(sectionName, pushHistory = true) {
-  if (!sectionName) sectionName = 'inicio';
-  // Oculta todas las secciones y muestra la solicitada
-  document.querySelectorAll('.section-content').forEach(section => section.classList.add('hidden'));
-  const target = document.getElementById(sectionName + '-section');
-  if (target) target.classList.remove('hidden');
-  currentSection = sectionName;
-
-  // Mantén tu lógica de actualización de nav links
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.classList.remove('text-purple-600', 'font-bold');
-    link.classList.add('text-gray-700');
-  });
-
-  // Cierra menú móvil y sube al top
-  const mobileMenu = document.getElementById('mobile-menu');
-  if (mobileMenu) mobileMenu.classList.add('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Agrega entrada al historial (solo si se pidió)
-  if (pushHistory) {
-    if (!history.state || history.state.section !== sectionName) {
-      try {
-        history.pushState({ section: sectionName }, '', '#' + sectionName);
-      } catch (e) {
-        // algunos entornos restringen history; ignorar errores
-      }
-    }
-  }
-}
-
 /* Manejador del botón "atrás" / gesto retroceso */
 window.addEventListener('popstate', function (event) {
   const sec = (event.state && event.state.section)
@@ -7036,22 +6973,81 @@ function loadCartSummary() {
 }
 
 // 🚀 Esta versión actualiza el resumen cada vez que entras a la sección “resumen”
-function showSection(sectionId, pushHistory = true) {
-  document.querySelectorAll('.section-content').forEach(s => s.classList.add('hidden'));
-  const target = document.getElementById(`${sectionId}-section`);
-  if (target) target.classList.remove('hidden');
+function showSection(sectionName, pushHistory = true) {
+  if (!sectionName) sectionName = 'inicio';
 
-  // 🔁 Actualizar resumen dinámicamente cuando se entra a la sección
-  if (sectionId === 'resumen') {
-    loadCartSummary();
+  // Oculta todas las secciones y muestra la solicitada
+  document.querySelectorAll('.section-content').forEach(section => section.classList.add('hidden'));
+  const target = document.getElementById(sectionName + '-section');
+  if (target) target.classList.remove('hidden');
+  currentSection = sectionName;
+
+  // Actualizar estilos de nav links (mantén tu lógica)
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('text-purple-600', 'font-bold');
+    link.classList.add('text-gray-700');
+  });
+
+  // Cierra menú móvil y sube al top
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileMenu) mobileMenu.classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Agrega entrada al historial (solo si se pidió)
+  if (pushHistory) {
+    if (!history.state || history.state.section !== sectionName) {
+      try {
+        history.pushState({ section: sectionName }, '', '#' + sectionName);
+      } catch (e) {
+        // algunos entornos restringen history; ignorar errores
+      }
+    }
   }
 
-  // mantener el historial funcional (tu función original)
-  if (pushHistory) {
-    if (!history.state || history.state.section !== sectionId) {
-      try {
-        history.pushState({ section: sectionId }, '', '#' + sectionId);
-      } catch (e) {}
+  // --------------------------
+  // LIMPIEZA DE SECCIONES DINÁMICAS
+  // --------------------------
+
+  // Limpiar "Mis Puntos" si salimos de esa sección
+  if (sectionName !== "puntos") {
+    const dniInput = document.getElementById("dni-cliente");
+    const resultadoPuntos = document.getElementById("resultado-puntos");
+    if (dniInput) {
+      dniInput.value = "";
+      dniInput.blur();
+    }
+    if (resultadoPuntos) {
+      // opcional: animación de fade-out antes de limpiar
+      resultadoPuntos.classList.add('animate-fade-out');
+      setTimeout(() => {
+        resultadoPuntos.innerHTML = "";
+        resultadoPuntos.classList.remove('animate-fade-out');
+      }, 250);
+    }
+  }
+
+  // Limpiar "Seguimiento" si salimos de esa sección
+  if (sectionName !== "seguimiento") {
+    const codigoInput = document.getElementById("codigo-seguimiento");
+    const resultadoSeg = document.getElementById("resultado-seguimiento");
+    if (codigoInput) {
+      codigoInput.value = "";
+      codigoInput.blur();
+    }
+    if (resultadoSeg) {
+      // detener animación de puntos si existe
+      if (window._pedidoDotInterval) {
+        clearInterval(window._pedidoDotInterval);
+        window._pedidoDotInterval = null;
+      }
+      resultadoSeg.classList.add('animate-fade-out');
+      setTimeout(() => {
+        resultadoSeg.innerHTML = "";
+        // también quitar posibles nodos de loading-dots
+        const dots = document.getElementById('loading-dots');
+        if (dots) dots.remove();
+        resultadoSeg.classList.remove('animate-fade-out');
+      }, 250);
     }
   }
 }
