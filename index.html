@@ -101,7 +101,6 @@ html, body {
 
 <!-- 🎨 Estilos -->
 <style>
-/* Alinear íconos y sangría */
 .custom-list { list-style: none; padding: 0; margin: 0; }
 .custom-list li {
   position: relative;
@@ -117,18 +116,44 @@ html, body {
   text-align: center;
 }
 
-/* Recompensas visuales */
-.reward-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem; }
+/* Tarjetas de progreso */
+.reward-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
 .reward-card {
-  background:#f8fafc; border-radius:1rem; padding:1rem; box-shadow:0 1px 4px rgba(0,0,0,.1);
-  transition:all .4s ease; text-align:center;
+  background: #f9fafb;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  text-align: center;
+  transition: all 0.4s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
+.reward-card p { margin: 0.2rem 0; font-size: 0.85rem; }
+.reward-card span.icon { font-size: 1.6rem; display: block; }
+
+/* Activos (premios) */
 .reward-card.active {
-  background:linear-gradient(to bottom right,#ffe4ec,#fff);
-  transform:scale(1.05);
-  box-shadow:0 0 10px rgba(255,182,193,0.6);
+  background: linear-gradient(to bottom right, #ffe4ec, #fff);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255,182,193,0.6);
+  font-weight: 600;
 }
-.reward-card p { margin:0.25rem 0; }
+
+/* Intermedios */
+.reward-card.mid {
+  background: #f1f5f9;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Estrella obtenida */
+.reward-card.reached {
+  border: 2px solid #f9a8d4;
+  background: #fff5f8;
+}
 </style>
 
 <!-- Estilos acordeón -->
@@ -1116,12 +1141,12 @@ input[type=number] {
 </section>
 
 <!-- ⭐ SECCIÓN MIS PUNTOS -->
-<section id="puntos-section" class="section-content hidden min-h-[80vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 py-20">
+<section id="puntos-section" class="section-content hidden min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 py-20">
   <div class="max-w-xl mx-auto text-center px-4">
     <h2 class="text-3xl font-extrabold text-gray-800 mb-4">⭐ Programa Estrellas BMarket</h2>
     <p class="text-gray-600 mb-8">
-      Cada compra te da una ⭐ estrella. ¡Acumúlalas y desbloquea beneficios exclusivos 🎁!<br>
-      Ingresa tu DNI para ver tus estrellas actuales y tus próximos premios.
+      Cada compra te da una ⭐ estrella. ¡Avanza paso a paso hasta tus premios exclusivos 🎁!<br>
+      Ingresa tu DNI para ver tu progreso.
     </p>
 
     <!-- 🔹 Campo de búsqueda -->
@@ -1137,12 +1162,12 @@ input[type=number] {
     <!-- 🔹 Resultado dinámico -->
     <div id="resultado-puntos" class="mt-6"></div>
 
-    <!-- 🔹 Leyenda de recompensas (siempre visible) -->
+    <!-- 🔹 Leyenda de recompensas (fija) -->
     <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left">
       <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">
         🎯 Beneficios por estrellas acumuladas
       </h3>
-      <ul class="text-gray-600 text-sm space-y-2 custom-list">
+      <ul class="text-gray-600 text-sm space-y-2">
         <li><span class="emoji">🌟</span> <strong>2 estrellas:</strong> Envío gratis en tu próxima compra.</li>
         <li><span class="emoji">💎</span> <strong>4 estrellas:</strong> 15% de descuento en cualquier producto en próxima compra.</li>
         <li><span class="emoji">🎉</span> <strong>6 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
@@ -7269,10 +7294,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
-
-
-
- <!-- ⚡ Script -->
+ 
+<!-- ⚡ Script -->
 <script>
 async function consultarPuntos() {
   const dni = document.getElementById("dni-cliente").value.trim();
@@ -7291,7 +7314,6 @@ async function consultarPuntos() {
   try {
     const res = await fetch(`/.netlify/functions/getPuntos?dni=${dni}`);
     const data = await res.json();
-
     if (data.estado === "No encontrado" || data.error) {
       cont.innerHTML = `<p class="text-red-500 font-semibold">❌ No se encontró ningún cliente con ese DNI.</p>`;
       return;
@@ -7300,6 +7322,7 @@ async function consultarPuntos() {
     const estrellas = data.estrellas;
     const progreso = Math.min((estrellas / 6) * 100, 100);
 
+    // Renderizar la barra y las tarjetas
     cont.innerHTML = `
       <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto transition-all duration-500">
         <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
@@ -7313,22 +7336,34 @@ async function consultarPuntos() {
         <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
         <p class="text-xs text-gray-400 mb-4">Última actualización: ${data.fecha}</p>
 
-        <!-- 🎯 Recompensas visuales -->
+        <!-- 🎯 Niveles de progreso -->
         <div class="reward-grid">
+          <div class="reward-card ${estrellas>=1?'reached':''} mid">
+            <span class="icon">⭐</span>
+            <p>1</p>
+          </div>
           <div class="reward-card ${estrellas>=2?'active':''}">
-            <p class="text-2xl">🚚</p>
-            <p class="font-semibold">2 estrellas</p>
+            <span class="icon">🚚</span>
+            <p>2</p>
             <p class="text-xs text-gray-500">Envío gratis</p>
           </div>
+          <div class="reward-card ${estrellas>=3?'reached':''} mid">
+            <span class="icon">⭐</span>
+            <p>3</p>
+          </div>
           <div class="reward-card ${estrellas>=4?'active':''}">
-            <p class="text-2xl">💎</p>
-            <p class="font-semibold">4 estrellas</p>
-            <p class="text-xs text-gray-500">15 % descuento</p>
+            <span class="icon">💎</span>
+            <p>4</p>
+            <p class="text-xs text-gray-500">15 % desc.</p>
+          </div>
+          <div class="reward-card ${estrellas>=5?'reached':''} mid">
+            <span class="icon">⭐</span>
+            <p>5</p>
           </div>
           <div class="reward-card ${estrellas>=6?'active':''}">
-            <p class="text-2xl">🎉</p>
-            <p class="font-semibold">6 estrellas</p>
-            <p class="text-xs text-gray-500">20 % VIP + prioridad</p>
+            <span class="icon">🎉</span>
+            <p>6</p>
+            <p class="text-xs text-gray-500">20 % VIP</p>
           </div>
         </div>
       </div>`;
@@ -7337,26 +7372,6 @@ async function consultarPuntos() {
     console.error(err);
   }
 }
-</script>
-
-
-<script>
-// 🔹 Cierra el menú móvil solo si el botón NO abre un submenú
-document.querySelectorAll("#mobile-menu button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const onclickValue = btn.getAttribute("onclick") || "";
-
-    // Si el botón tiene 'showSection' => cierra el menú
-    // Si tiene 'toggleMobileRopaMenu' o 'toggleMobileAccesoriosMenu' => NO cerrar
-    if (
-      onclickValue.includes("showSection(") &&
-      !onclickValue.includes("toggleMobileRopaMenu") &&
-      !onclickValue.includes("toggleMobileAccesoriosMenu")
-    ) {
-      document.getElementById("mobile-menu").classList.add("hidden");
-    }
-  });
-});
 </script>
 
 
