@@ -12,8 +12,6 @@ export async function handler(event) {
 
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-
-    // fetch nativo de Node 18+
     const res = await fetch(url);
     if (!res.ok) {
       return { statusCode: res.status, body: JSON.stringify({ error: "Error al leer la hoja" }) };
@@ -29,8 +27,7 @@ export async function handler(event) {
 
     const iDNI = headers.indexOf("dni_cliente");
     const iNombre = headers.indexOf("nombre");
-    const iPuntos = headers.indexOf("puntos");
-    const iEstrellas = headers.indexOf("estrellas");
+    const iPuntos = headers.indexOf("puntos"); // 1 punto = 1 estrella
     const iFecha = headers.indexOf("ultima_actualizacion");
 
     const cliente = filas.find(r => r[iDNI]?.trim() === dni);
@@ -39,20 +36,27 @@ export async function handler(event) {
       return { statusCode: 404, body: JSON.stringify({ estado: "No encontrado" }) };
     }
 
-    const puntos = parseInt(cliente[iPuntos] || "0");
-    const estrellas = Math.floor(puntos / 3); // puedes ajustar si tus estrellas no dependen de puntos
+    const estrellas = parseInt(cliente[iPuntos] || "0"); // 1 punto = 1 estrella
     let beneficio = "";
 
-    // 🌟 Nuevos niveles: 2, 4 y 6 estrellas
-    if (estrellas >= 6) beneficio = "🎉 20% de descuento VIP y prioridad en envíos";
-    else if (estrellas >= 4) beneficio = "💎 15% de descuento";
-    else if (estrellas >= 2) beneficio = "🚚 Envío gratis en tu próxima compra";
-    else beneficio = "🌱 Sigue acumulando estrellas para más beneficios";
+    // Nueva lógica: beneficios solo exactos
+    switch (estrellas) {
+      case 2:
+        beneficio = "🚚 Envío gratis en tu próxima compra";
+        break;
+      case 4:
+        beneficio = "💎 15% de descuento en cualquier producto";
+        break;
+      case 6:
+        beneficio = "🎉 20% de descuento VIP y prioridad en envíos";
+        break;
+      default:
+        beneficio = "🌱 Sigue acumulando estrellas para más beneficios";
+    }
 
     const respuesta = {
       nombre: cliente[iNombre] || "",
       dni: cliente[iDNI] || dni,
-      puntos,
       estrellas,
       beneficio,
       fecha: cliente[iFecha] || "—"
@@ -64,4 +68,3 @@ export async function handler(event) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
-

@@ -98,6 +98,39 @@ html, body {
     }
 
 </style>
+
+<!-- 🎨 Estilos -->
+<style>
+/* Alinear íconos y sangría */
+.custom-list { list-style: none; padding: 0; margin: 0; }
+.custom-list li {
+  position: relative;
+  padding-left: 2rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.custom-list .emoji {
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 1.5rem;
+  text-align: center;
+}
+
+/* Recompensas visuales */
+.reward-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem; }
+.reward-card {
+  background:#f8fafc; border-radius:1rem; padding:1rem; box-shadow:0 1px 4px rgba(0,0,0,.1);
+  transition:all .4s ease; text-align:center;
+}
+.reward-card.active {
+  background:linear-gradient(to bottom right,#ffe4ec,#fff);
+  transform:scale(1.05);
+  box-shadow:0 0 10px rgba(255,182,193,0.6);
+}
+.reward-card p { margin:0.25rem 0; }
+</style>
+
 <!-- Estilos acordeón -->
 <style>
 /* Ocultar flechas en inputs tipo number (cross-browser) */
@@ -1082,17 +1115,13 @@ input[type=number] {
   </div>
 </section>
 
-<!-- Seccion puntos -->
-
 <!-- ⭐ SECCIÓN MIS PUNTOS -->
-<section id="puntos-section" class="section-content hidden min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 py-20">
+<section id="puntos-section" class="section-content hidden min-h-[80vh] flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 py-20">
   <div class="max-w-xl mx-auto text-center px-4">
-    <h2 class="text-3xl font-extrabold text-gray-800 mb-4">
-      ⭐ Programa Estrellas BMarket
-    </h2>
+    <h2 class="text-3xl font-extrabold text-gray-800 mb-4">⭐ Programa Estrellas BMarket</h2>
     <p class="text-gray-600 mb-8">
-      Acumula puntos con cada compra y desbloquea beneficios exclusivos 🎁<br>
-      Ingresa tu DNI para ver tus estrellas actuales.
+      Cada compra te da una ⭐ estrella. ¡Acumúlalas y desbloquea beneficios exclusivos 🎁!<br>
+      Ingresa tu DNI para ver tus estrellas actuales y tus próximos premios.
     </p>
 
     <!-- 🔹 Campo de búsqueda -->
@@ -1105,29 +1134,25 @@ input[type=number] {
       </button>
     </div>
 
-    <!-- 🔹 Resultado -->
+    <!-- 🔹 Resultado dinámico -->
     <div id="resultado-puntos" class="mt-6"></div>
 
-    <!-- 🔹 Leyenda de beneficios -->
+    <!-- 🔹 Leyenda de recompensas (siempre visible) -->
     <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left">
       <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">
         🎯 Beneficios por estrellas acumuladas
       </h3>
-
-      <!-- 🩷 Lista con sangría elegante -->
       <ul class="text-gray-600 text-sm space-y-2 custom-list">
-        <li>🌟 <strong>2 estrellas:</strong> Envío gratis en tu próxima compra.</li>
-        <li>💎 <strong>4 estrellas:</strong> 15% de descuento en cualquier producto.</li>
-        <li>🎉 <strong>6 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
+        <li><span class="emoji">🌟</span> <strong>2 estrellas:</strong> Envío gratis en tu próxima compra.</li>
+        <li><span class="emoji">💎</span> <strong>4 estrellas:</strong> 15% de descuento en cualquier producto en próxima compra.</li>
+        <li><span class="emoji">🎉</span> <strong>6 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
       </ul>
-
-      <p class="text-xs text-gray-400 mt-4 text-start">
-        * Las estrellas se acumulan automáticamente con tus compras, beneficios validos para tu siguiente pedido.
+      <p class="text-xs text-gray-400 mt-4 text-center">
+        * Las estrellas se acumulan automáticamente con tus compras.
       </p>
     </div>
   </div>
 </section>
-
 
 <!-- Sección Contacto -->
 <section id="contacto-section" class="section-content hidden py-16 bg-gray-50">
@@ -7245,11 +7270,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
+
+ <!-- ⚡ Script -->
 <script>
 async function consultarPuntos() {
   const dni = document.getElementById("dni-cliente").value.trim();
   const cont = document.getElementById("resultado-puntos");
-
   if (!dni) {
     cont.innerHTML = `<p class="text-gray-500">Por favor, ingresa tu DNI.</p>`;
     return;
@@ -7259,8 +7286,7 @@ async function consultarPuntos() {
     <div class="flex flex-col items-center justify-center py-10 animate-pulse text-pink-500">
       <div class="w-10 h-10 mb-3 border-4 border-pink-300 border-t-pink-500 rounded-full animate-spin"></div>
       <p>Consultando tus estrellas...</p>
-    </div>
-  `;
+    </div>`;
 
   try {
     const res = await fetch(`/.netlify/functions/getPuntos?dni=${dni}`);
@@ -7271,47 +7297,48 @@ async function consultarPuntos() {
       return;
     }
 
-    // 📊 Ajuste: ahora máximo 6 estrellas
-    const maxEstrellas = 6;
-    const progreso = Math.min((data.estrellas / maxEstrellas) * 100, 100);
-
-    // 🌈 Color dinámico según nivel de estrellas
-    let bgColor = "bg-white";
-    if (data.estrellas >= 6) bgColor = "bg-gradient-to-r from-yellow-100 to-yellow-50"; // 20% desc
-    else if (data.estrellas >= 4) bgColor = "bg-gradient-to-r from-pink-100 to-pink-50"; // 15% desc
-    else if (data.estrellas >= 2) bgColor = "bg-gradient-to-r from-rose-100 to-white";   // Envío gratis
+    const estrellas = data.estrellas;
+    const progreso = Math.min((estrellas / 6) * 100, 100);
 
     cont.innerHTML = `
-      <div class="${bgColor} rounded-2xl shadow-lg p-6 max-w-md mx-auto relative overflow-hidden transition-all duration-500 hover:shadow-pink-200">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-pink-100 rounded-full opacity-40"></div>
-
+      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto transition-all duration-500">
         <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
         <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
 
-        <div class="mb-4">
-          <div class="w-full bg-gray-200 rounded-full h-3 relative">
-            <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width: ${progreso}%"></div>
+        <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
+          <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width:${progreso}%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mb-3">${estrellas} de 6 ⭐</p>
+
+        <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
+        <p class="text-xs text-gray-400 mb-4">Última actualización: ${data.fecha}</p>
+
+        <!-- 🎯 Recompensas visuales -->
+        <div class="reward-grid">
+          <div class="reward-card ${estrellas>=2?'active':''}">
+            <p class="text-2xl">🚚</p>
+            <p class="font-semibold">2 estrellas</p>
+            <p class="text-xs text-gray-500">Envío gratis</p>
           </div>
-          <p class="text-sm text-gray-500 mt-2">${data.estrellas} de 6 ⭐</p>
+          <div class="reward-card ${estrellas>=4?'active':''}">
+            <p class="text-2xl">💎</p>
+            <p class="font-semibold">4 estrellas</p>
+            <p class="text-xs text-gray-500">15 % descuento</p>
+          </div>
+          <div class="reward-card ${estrellas>=6?'active':''}">
+            <p class="text-2xl">🎉</p>
+            <p class="font-semibold">6 estrellas</p>
+            <p class="text-xs text-gray-500">20 % VIP + prioridad</p>
+          </div>
         </div>
-
-        <div class="text-lg font-semibold text-pink-600 mb-3">${data.beneficio}</div>
-
-        <div class="flex justify-center gap-1 mb-4">
-          ${[...Array(6)].map((_, i) =>
-            `<span class="text-2xl ${i < data.estrellas ? 'text-yellow-400' : 'text-gray-300'}">★</span>`
-          ).join('')}
-        </div>
-
-        <p class="text-sm text-gray-400 mb-3">Última actualización: ${data.fecha}</p>
-        </div>
-    `;
+      </div>`;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
   }
 }
 </script>
+
 
 <script>
 // 🔹 Cierra el menú móvil solo si el botón NO abre un submenú
