@@ -99,44 +99,6 @@ html, body {
 
 </style>
 
-
-<style>
-.book-frame {
-  background: linear-gradient(to bottom right, #fffefc, #f9f8f6);
-  border: 2px solid #e4dcd3;
-  border-radius: 1.5rem;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 6px 12px rgba(0,0,0,0.08);
-  padding: 1.5rem 1rem;
-  margin-top: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Simular el borde del cuaderno (costura lateral) */
-.book-frame::before {
-  content: "";
-  position: absolute;
-  left: 10px;
-  top: 0;
-  bottom: 0;
-  width: 8px;
-  background: repeating-linear-gradient(
-    to bottom,
-    #d9d2c7,
-    #d9d2c7 2px,
-    transparent 2px,
-    transparent 8px
-  );
-  border-radius: 4px;
-  opacity: 0.4;
-}
-
-/* Ajuste interno para la grilla */
-.book-frame .reward-grid {
-  margin-top: 0;
-}
-
-</style>
 <!-- 🎨 Estilos -->
 <style>
 .custom-list { list-style: none; padding: 0; margin: 0; }
@@ -7412,10 +7374,8 @@ async function consultarPuntos() {
         <p class="text-xs text-gray-400 mb-4">Última actualización: ${data.fecha}</p>
 
         <!-- 🎯 Niveles de progreso -->
-        <div class="book-frame">
-    <div class="reward-grid">
+        <div class="reward-grid">
           ${renderRewardCards(estrellas)}
-        </div>
         </div>
       </div>`;
   } catch (err) {
