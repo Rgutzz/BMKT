@@ -45,10 +45,10 @@ export async function handler(event) {
         beneficio = "🚚 Envío gratis en tu próxima compra";
         break;
       case 4:
-        beneficio = "💎 15% de descuento en cualquier producto";
+        beneficio = "💎 15% de descuento en cualquier producto en tu próxima compra";
         break;
       case 6:
-        beneficio = "🎉 20% de descuento VIP y prioridad en envíos";
+        beneficio = "🎉 20% de descuento VIP y prioridad en envíos en tu próxima compra";
         break;
       default:
         beneficio = "🌱 Sigue acumulando estrellas para más beneficios";
