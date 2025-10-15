@@ -40,13 +40,14 @@ export async function handler(event) {
     }
 
     const puntos = parseInt(cliente[iPuntos] || "0");
-    const estrellas = Math.floor(puntos / 3);
+    const estrellas = Math.floor(puntos / 3); // puedes ajustar si tus estrellas no dependen de puntos
     let beneficio = "";
 
-    if (estrellas >= 9) beneficio = "🎉 20% de descuento";
-    else if (estrellas >= 6) beneficio = "💎 15% de descuento";
-    else if (estrellas >= 3) beneficio = "🚚 Envío gratis";
-    else beneficio = "🌱 Sigue acumulando puntos";
+    // 🌟 Nuevos niveles: 2, 4 y 6 estrellas
+    if (estrellas >= 6) beneficio = "🎉 20% de descuento VIP y prioridad en envíos";
+    else if (estrellas >= 4) beneficio = "💎 15% de descuento";
+    else if (estrellas >= 2) beneficio = "🚚 Envío gratis en tu próxima compra";
+    else beneficio = "🌱 Sigue acumulando estrellas para más beneficios";
 
     const respuesta = {
       nombre: cliente[iNombre] || "",
@@ -63,3 +64,4 @@ export async function handler(event) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
+

@@ -113,6 +113,14 @@ input[type=number] {
 }
 </style>
 
+<!-- 🎨 Estilo para sangría en listas multilínea -->
+<style>
+.custom-list li {
+  padding-left: 0.5rem;      /* espacio entre viñeta y texto */
+  text-indent: -0.5rem;      /* mantiene alineado el texto */
+  margin-left: 1.25rem;      /* sangría general */
+}
+</style>
 
 <style>
 .ticker-container {
@@ -1102,13 +1110,20 @@ input[type=number] {
 
     <!-- 🔹 Leyenda de beneficios -->
     <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">🎯 Beneficios por estrellas acumuladas</h3>
-      <ul class="text-gray-600 text-sm space-y-2">
-        <li>🌟 <strong>3 estrellas:</strong> Envío gratis en tu próxima compra.</li>
-        <li>💎 <strong>6 estrellas:</strong> 15% de descuento en cualquier producto.</li>
-        <li>🎉 <strong>9 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
+      <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">
+        🎯 Beneficios por estrellas acumuladas
+      </h3>
+
+      <!-- 🩷 Lista con sangría elegante -->
+      <ul class="text-gray-600 text-sm space-y-2 custom-list">
+        <li>🌟 <strong>2 estrellas:</strong> Envío gratis en tu próxima compra.</li>
+        <li>💎 <strong>4 estrellas:</strong> 15% de descuento en cualquier producto.</li>
+        <li>🎉 <strong>6 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
       </ul>
-      <p class="text-xs text-gray-400 mt-4 text-center">* Las estrellas se acumulan automáticamente con tus compras.</p>
+
+      <p class="text-xs text-gray-400 mt-4 text-start">
+        * Las estrellas se acumulan automáticamente con tus compras, beneficios validos para tu siguiente pedido.
+      </p>
     </div>
   </div>
 </section>
@@ -7228,7 +7243,9 @@ document.addEventListener("DOMContentLoaded", () => {
     consultarPuntos();
   });
 });
+</script>
 
+<script>
 async function consultarPuntos() {
   const dni = document.getElementById("dni-cliente").value.trim();
   const cont = document.getElementById("resultado-puntos");
@@ -7254,15 +7271,15 @@ async function consultarPuntos() {
       return;
     }
 
-    // 📊 Barra de progreso visual
-    const maxEstrellas = 9;
+    // 📊 Ajuste: ahora máximo 6 estrellas
+    const maxEstrellas = 6;
     const progreso = Math.min((data.estrellas / maxEstrellas) * 100, 100);
 
-    // 🌈 Color dinámico según nivel
+    // 🌈 Color dinámico según nivel de estrellas
     let bgColor = "bg-white";
-    if (data.estrellas >= 9) bgColor = "bg-gradient-to-r from-yellow-100 to-yellow-50";
-    else if (data.estrellas >= 6) bgColor = "bg-gradient-to-r from-pink-100 to-pink-50";
-    else if (data.estrellas >= 3) bgColor = "bg-gradient-to-r from-rose-100 to-white";
+    if (data.estrellas >= 6) bgColor = "bg-gradient-to-r from-yellow-100 to-yellow-50"; // 20% desc
+    else if (data.estrellas >= 4) bgColor = "bg-gradient-to-r from-pink-100 to-pink-50"; // 15% desc
+    else if (data.estrellas >= 2) bgColor = "bg-gradient-to-r from-rose-100 to-white";   // Envío gratis
 
     cont.innerHTML = `
       <div class="${bgColor} rounded-2xl shadow-lg p-6 max-w-md mx-auto relative overflow-hidden transition-all duration-500 hover:shadow-pink-200">
@@ -7275,19 +7292,19 @@ async function consultarPuntos() {
           <div class="w-full bg-gray-200 rounded-full h-3 relative">
             <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width: ${progreso}%"></div>
           </div>
-          <p class="text-sm text-gray-500 mt-2">${data.estrellas} de 9 ⭐</p>
+          <p class="text-sm text-gray-500 mt-2">${data.estrellas} de 6 ⭐</p>
         </div>
 
         <div class="text-lg font-semibold text-pink-600 mb-3">${data.beneficio}</div>
 
         <div class="flex justify-center gap-1 mb-4">
-          ${[...Array(9)].map((_, i) =>
+          ${[...Array(6)].map((_, i) =>
             `<span class="text-2xl ${i < data.estrellas ? 'text-yellow-400' : 'text-gray-300'}">★</span>`
           ).join('')}
         </div>
 
-        <p class="text-sm text-gray-400">Última actualización: ${data.fecha}</p>
-      </div>
+        <p class="text-sm text-gray-400 mb-3">Última actualización: ${data.fecha}</p>
+        </div>
     `;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
@@ -7295,6 +7312,7 @@ async function consultarPuntos() {
   }
 }
 </script>
+
 <script>
 // 🔹 Cierra el menú móvil solo si el botón NO abre un submenú
 document.querySelectorAll("#mobile-menu button").forEach(btn => {
