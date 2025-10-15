@@ -7298,6 +7298,26 @@ document.querySelectorAll("#mobile-menu button").forEach(btn => {
 
 <!-- ⚡ Script -->
 <script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("dni-cliente");
+  const boton = document.querySelector("button[onclick='consultarPuntos()']");
+
+  // 🔹 Ejecutar con Enter (PC y móvil)
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      input.blur(); // 🔸 Oculta teclado en móviles
+      consultarPuntos();
+    }
+  });
+
+  // 🔹 Ocultar teclado también cuando se presiona el botón en móviles
+  boton.addEventListener("click", () => {
+    input.blur();
+    consultarPuntos();
+  });
+});
+
 async function consultarPuntos() {
   const dni = document.getElementById("dni-cliente").value.trim();
   const cont = document.getElementById("resultado-puntos");
