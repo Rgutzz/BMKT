@@ -101,6 +101,7 @@ html, body {
 
 <!-- 🎨 Estilos -->
 <style>
+/* 🔹 Lista personalizada */
 .custom-list { list-style: none; padding: 0; margin: 0; }
 .custom-list li {
   position: relative;
@@ -116,7 +117,7 @@ html, body {
   text-align: center;
 }
 
-/* Tarjetas de progreso */
+/* 🌟 Tarjetas de progreso (base) */
 .reward-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
@@ -125,25 +126,26 @@ html, body {
   justify-items: center;
 }
 
-/* 💻 En pantallas grandes: una sola fila horizontal */
+/* 💻 En pantallas grandes: una sola fila sin scroll */
 @media (min-width: 1024px) {
   .reward-grid {
     display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    overflow-x: auto;
+    flex-wrap: nowrap;       /* 🔒 evita saltos de línea */
+    justify-content: center; /* centra la fila */
+    align-items: stretch;
     gap: 1rem;
-    padding-bottom: 0.5rem;
-    scroll-snap-type: x mandatory;
+    width: 100%;
+    max-width: none;         /* 🔥 ignora limitaciones del contenedor padre */
   }
+
   .reward-card {
-    flex: 0 0 auto;
-    width: 130px;
-    scroll-snap-align: start;
+    flex: 1 1 auto;          /* permite que todas se repartan el ancho */
+    min-width: 120px;        /* evita que se encojan demasiado */
+    max-width: 200px;        /* ancho máximo por tarjeta */
   }
 }
 
-/* Tarjeta base */
+/* 🎨 Tarjeta base */
 .reward-card {
   background: #f9fafb;
   border-radius: 1rem;
@@ -155,10 +157,17 @@ html, body {
   position: relative;
   overflow: hidden;
 }
-.reward-card p { margin: 0.2rem 0; font-size: 0.8rem; line-height: 1.2; }
-.reward-card span.icon { font-size: 1.6rem; display: block; }
+.reward-card p {
+  margin: 0.2rem 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+.reward-card span.icon {
+  font-size: 1.6rem;
+  display: block;
+}
 
-/* Activos (premios y pasos alcanzados) */
+/* 🔸 Tarjetas activas */
 .reward-card.active {
   background: linear-gradient(to bottom right, #ffe4ec, #fff);
   transform: scale(1.03);
@@ -167,14 +176,14 @@ html, body {
   font-weight: 600;
 }
 
-/* Intermedios */
+/* 🔹 Tarjetas intermedias */
 .reward-card.mid {
   background: #f1f5f9;
   font-weight: 500;
   opacity: 0.9;
 }
 
-/* Tarjetas alcanzadas */
+/* 🔸 Tarjetas alcanzadas */
 .reward-card.reached {
   border: 2px solid #f9a8d4;
   background: #fff5f8;
@@ -198,7 +207,6 @@ html, body {
   }
 }
 </style>
-
 
 <!-- Estilos acordeón -->
 <style>
