@@ -101,6 +101,7 @@ html, body {
 
 <!-- 🎨 Estilos -->
 <style>
+/* 🔹 Lista personalizada */
 .custom-list { list-style: none; padding: 0; margin: 0; }
 .custom-list li {
   position: relative;
@@ -116,7 +117,7 @@ html, body {
   text-align: center;
 }
 
-/* Tarjetas de progreso */
+/* 🌟 Tarjetas de progreso (base) */
 .reward-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
@@ -124,6 +125,26 @@ html, body {
   margin-top: 1.2rem;
   justify-items: center;
 }
+
+/* 💻 En pantallas grandes: una sola fila sin scroll */
+@media (min-width: 1024px) {
+  .reward-grid {
+    display: flex;
+    flex-wrap: nowrap;       /* 🔒 evita saltos de línea */
+    justify-content: center; /* centra la fila */
+    align-items: stretch;
+    gap: 1rem;
+    width: 100%;
+    max-width: none;         /* 🔥 ignora limitaciones del contenedor padre */
+  }
+
+  .reward-card {
+  flex: 1 1 150px;  /* equilibrio entre tamaño fijo y adaptable */
+  min-width: 140px;
+  max-width: 220px;
+}
+}
+/* 🎨 Tarjeta base */
 .reward-card {
   background: #f9fafb;
   border-radius: 1rem;
@@ -135,10 +156,17 @@ html, body {
   position: relative;
   overflow: hidden;
 }
-.reward-card p { margin: 0.2rem 0; font-size: 0.8rem; line-height: 1.2; }
-.reward-card span.icon { font-size: 1.6rem; display: block; }
+.reward-card p {
+  margin: 0.2rem 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+.reward-card span.icon {
+  font-size: 1.6rem;
+  display: block;
+}
 
-/* Activos (premios y pasos alcanzados) */
+/* 🔸 Tarjetas activas */
 .reward-card.active {
   background: linear-gradient(to bottom right, #ffe4ec, #fff);
   transform: scale(1.03);
@@ -147,14 +175,14 @@ html, body {
   font-weight: 600;
 }
 
-/* Intermedios */
+/* 🔹 Tarjetas intermedias */
 .reward-card.mid {
   background: #f1f5f9;
   font-weight: 500;
   opacity: 0.9;
 }
 
-/* Tarjetas alcanzadas */
+/* 🔸 Tarjetas alcanzadas */
 .reward-card.reached {
   border: 2px solid #f9a8d4;
   background: #fff5f8;
@@ -166,6 +194,7 @@ html, body {
   border: 2px solid #fb7185;
   box-shadow: 0 0 15px rgba(251,113,133,0.6);
 }
+
 @keyframes glowPulse {
   0%, 100% {
     box-shadow: 0 0 8px rgba(251,113,133,0.3);
@@ -520,7 +549,7 @@ input[type=number] {
   <div class="mt-6"> 
             
             <!-- 🛒 Nuevo botón para ver resumen -->
-      <button onclick="toggleCart(); showSection('resumen')" class="w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center">
+      <button onclick="toggleCart(); showSection('resumen')" class="w-full bg-black text-white py-3 rounded-lg hover:bg-[#cc9999] transition-colors flex items-center justify-center">
         <i class="fas fa-receipt mr-2"></i>
         Ver resumen de compra
       </button>
@@ -1175,7 +1204,7 @@ input[type=number] {
     <div class="flex justify-center gap-3 mb-8">
       <input id="dni-cliente" type="number" placeholder="Ingresa tu DNI"
         class="border border-gray-300 rounded-lg px-4 py-2 w-64 focus:ring-2 focus:ring-pink-400 focus:outline-none text-center">
-      <button onclick="consultarPuntos()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg transition font-medium">
+      <button onclick="consultarPuntos()" class="bg-black hover:bg-[#cc9999] text-white px-6 py-2 rounded-lg transition font-medium">
         Consultar ⭐
       </button>
     </div>
@@ -1352,7 +1381,7 @@ input[type=number] {
 
   <!-- Correo + mensaje -->
   <div class="flex flex-col items-center sm:items-start">
-    <button onclick="sendOrder('email')" class="flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition w-60 h-12">
+    <button onclick="sendOrder('email')" class="flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#cc9999] transition w-60 h-12">
       <i class="fas fa-envelope text-lg"></i> Enviar por Correo
     </button>
     <p class="text-xs text-gray-500 mt-2 text-center sm:text-left max-w-[240px]">
@@ -1361,9 +1390,9 @@ input[type=number] {
   </div>
 </div>
 <!-- 🚚 Información de Envío -->
-<div class="bg-purple-50 border border-purple-200 rounded-xl p-5 text-gray-800">
+<div class="bg-pink-50 border border-pink-150 rounded-xl p-5 text-gray-800">
   <h3 class="text-lg font-semibold mb-2 flex items-center">
-    <i class="fas fa-truck text-purple-500 mr-2"></i> Métodos de Envío
+    <i class="fas fa-truck text-[#cc9999] mr-2"></i> Métodos de Envío
   </h3>
   <div class="text-sm space-y-2">
     <p class="font-semibold">Lima Metropolitana y Callao:</p>
@@ -7050,6 +7079,9 @@ function showSection(sectionName, pushHistory = true) {
       }, 250);
     }
   }
+   if (sectionName === "resumen") {
+    loadCartSummary();
+  }
 }
 
 async function sendOrder(method) {
@@ -7372,23 +7404,22 @@ async function consultarPuntos() {
     const progreso = Math.min((estrellas / 6) * 100, 100);
 
     cont.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto transition-all duration-500 overflow-hidden">
-        <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
-        <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
+  <div class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-5xl mx-auto transition-all duration-500 overflow-visible">
+    <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
+    <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
 
-        <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
-          <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width:${progreso}%"></div>
-        </div>
-        <p class="text-sm text-gray-500 mb-3">${estrellas} de 6 ⭐</p>
+    <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
+      <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width:${progreso}%"></div>
+    </div>
+    <p class="text-sm text-gray-500 mb-3">${estrellas} de 6 ⭐</p>
 
-        <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
-        <p class="text-xs text-gray-400 mb-4">Última actualización: ${data.fecha}</p>
+    <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
+    <p class="text-xs text-gray-400 mb-4">Última actualización: ${data.fecha}</p>
 
-        <!-- 🎯 Niveles de progreso -->
-        <div class="reward-grid">
-          ${renderRewardCards(estrellas)}
-        </div>
-      </div>`;
+    <div class="reward-grid">
+      ${renderRewardCards(estrellas)}
+    </div>
+  </div>`;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
