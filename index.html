@@ -252,20 +252,8 @@ input[type=number] {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-33.333%); }
 }
-/* 🌈 Estilo más atractivo para la tarjeta de progreso */
-.progreso-card {
-  background: linear-gradient(135deg, #fff0f6, #ffe4ec);
-  border: 2px solid #f9a8d4;
-  box-shadow: 0 5px 15px rgba(249,168,212,0.25);
-  transition: all 0.3s ease;
-}
-.progreso-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(249,168,212,0.35);
-}
 
 </style>
-
 
 <style>
     @keyframes fadeIn {
@@ -7433,19 +7421,12 @@ async function consultarPuntos() {
       </div>
 
       <!-- 🌟 Tarjeta de progreso (ancha) -->
-      <div class="progreso-card rounded-2xl p-6 max-w-5xl mx-auto transition-all duration-500 overflow-visible">
+      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-5xl mx-auto transition-all duration-500 overflow-visible">
         <h4 class="text-lg font-semibold text-gray-800 mb-4">Progreso hacia tus premios</h4>
         <div class="reward-grid">
           ${renderRewardCards(estrellas)}
         </div>
-        <div class="text-sm text-gray-700 text-left max-w-2xl mx-auto">
-    <ul class="space-y-2">
-      <li><span class="emoji">🌟</span> <strong>2 estrellas:</strong> Envío gratis en tu próxima compra.</li>
-      <li><span class="emoji">💎</span> <strong>4 estrellas:</strong> 15% de descuento en cualquier producto.</li>
-      <li><span class="emoji">🎉</span> <strong>6 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
-    </ul>
-  </div>
-      </div>`;
+    </div>`;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
