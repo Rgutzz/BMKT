@@ -101,68 +101,65 @@ html, body {
 
 <!-- 🎨 Estilos -->
 <style>
-/* 🔹 Lista personalizada */
-.custom-list { list-style: none; padding: 0; margin: 0; }
-.custom-list li {
-  position: relative;
-  padding-left: 2rem;
-  line-height: 1.5;
-  text-align: left;
-}
-.custom-list .emoji {
-  position: absolute;
-  left: 0;
-  top: 0.1rem;
-  width: 1.5rem;
-  text-align: center;
-}
-
-/* 🌟 Tarjetas de progreso (base) */
+/* 🌟 Contenedor de tarjetas (grid base y flex adaptable) */
 .reward-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
-  gap: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;           /* Permite varias filas si es necesario */
+  justify-content: center;   /* Centra las tarjetas */
+  align-items: stretch;
+  gap: 1rem;
   margin-top: 1.2rem;
-  justify-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-/* 💻 En pantallas grandes: una sola fila sin scroll */
+/* 💻 En pantallas grandes: una sola fila centrada y contenida */
 @media (min-width: 1024px) {
   .reward-grid {
-    display: flex;
-    flex-wrap: nowrap;       /* 🔒 evita saltos de línea */
-    justify-content: center; /* centra la fila */
-    align-items: stretch;
-    gap: 1rem;
-    width: 100%;
-    max-width: none;         /* 🔥 ignora limitaciones del contenedor padre */
+    flex-wrap: nowrap;        /* 🔒 Mantiene una sola fila */
+    justify-content: center;
+    gap: 1.2rem;
+    padding: 1rem 1.5rem;
+    max-width: 950px;         /* 🔹 Evita que sobresalgan */
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .reward-card {
-  flex: 1 1 150px;  /* equilibrio entre tamaño fijo y adaptable */
-  min-width: 140px;
-  max-width: 220px;
+    flex: 1 1 150px;          /* 🔸 Tamaño más equilibrado */
+    min-width: 140px;
+    max-width: 180px;         /* 🔹 más largas */
+  }
 }
-}
+
 /* 🎨 Tarjeta base */
 .reward-card {
   background: #f9fafb;
   border-radius: 1rem;
-  padding: 0.8rem 0.4rem;
-  width: 100%;
+  padding: 1rem 0.6rem;       /* 🔹 más espacio interior */
   text-align: center;
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   position: relative;
   overflow: hidden;
+  width: 100%;
+  min-width: 120px;
+  max-width: 180px;
+  min-height: 130px;          /* 🔹 altura consistente */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
 .reward-card p {
   margin: 0.2rem 0;
-  font-size: 0.8rem;
-  line-height: 1.2;
+  font-size: 0.85rem;
+  line-height: 1.3;
 }
+
 .reward-card span.icon {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   display: block;
 }
 
@@ -175,11 +172,11 @@ html, body {
   font-weight: 600;
 }
 
-/* 🔹 Tarjetas intermedias */
+/* 🔹 Tarjetas intermedias (ahora mismas dimensiones) */
 .reward-card.mid {
   background: #f1f5f9;
   font-weight: 500;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 /* 🔸 Tarjetas alcanzadas */
@@ -205,7 +202,27 @@ html, body {
     transform: scale(1.07);
   }
 }
+
+/* 🧭 Barra de progreso centrada y más corta */
+.progress-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  width: 100%;
+  max-width: 320px;  /* 🔹 ajusta el largo aquí (sm=280, md=320, lg=380) */
+}
+
+.progress-bar-inner {
+  height: 0.75rem;
+  border-radius: 9999px;
+  background-color: rgba(236, 72, 153, 1);
+  transition: width 0.6s ease;
+}
 </style>
+
 
 <!-- Estilos acordeón -->
 <style>
@@ -463,9 +480,9 @@ input[type=number] {
     <!-- Menú móvil -->
     <div id="mobile-menu" class="hidden bg-white shadow-lg md:hidden">
         <div class="px-4 py-2 space-y-2">
-            <button onclick="showSection('inicio')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Inicio</button>
+            <button onclick="showSection('inicio')" class="block w-full text-left py-2 text-gray-700 hover:text-[#cc9999]">Inicio</button>
             <div class="py-2">
-                <button onclick="toggleMobileRopaMenu()" class="flex items-center justify-between w-full text-left text-gray-700 hover:text-purple-600">
+                <button onclick="toggleMobileRopaMenu()" class="flex items-center justify-between w-full text-left text-gray-700 hover:text-[#cc9999]">
                     <span>Ropa</span>
                     <i class="fas fa-chevron-down text-sm" id="mobile-ropa-icon"></i>
                 </button>
@@ -478,34 +495,34 @@ input[type=number] {
                     <a href="#" onclick="showSection('poleras')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Poleras</a>
                     <a href="#" onclick="showSection('faldas')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Faldas</a> -->
                     <div class="text-xs font-semibold text-black py-1 mt-2">Ropa Unisex</div>
-                    <button onclick="showSection('polos-oversize-unisex')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Polos Oversize</button>
-                    <button onclick="showSection('ropa')" class="block py-1 text-sm font-semibold text-gray-600 hover:text-purple-600 border-t pt-2 mt-2">Ver Todo</button>
+                    <button onclick="showSection('polos-oversize-unisex')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Polos Oversize</button>
+                    <button onclick="showSection('ropa')" class="block py-1 text-sm font-semibold text-gray-600 hover:text-[#cc9999] border-t pt-2 mt-2">Ver Todo</button>
                 </div>
             </div>
             <div class="py-2">
-                <button onclick="toggleMobileAccesoriosMenu()" class="flex items-center justify-between w-full text-left text-gray-700 hover:text-purple-600">
+                <button onclick="toggleMobileAccesoriosMenu()" class="flex items-center justify-between w-full text-left text-gray-700 hover:text-[#cc9999]">
                     <span>Accesorios</span>
                     <i class="fas fa-chevron-down text-sm" id="mobile-accesorios-icon"></i>
                 </button>
                 <div id="mobile-accesorios-submenu" class="hidden pl-4 mt-2 space-y-1">
                     <div class="text-xs font-semibold text-black py-1">Joyería Waterproof</div>
-                    <button onclick="showSection('collares-waterproof')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Collares</button>
-                    <button onclick="showSection('pulseras-waterproof')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Pulseras</button>
-                    <button onclick="showSection('anillos-pareja')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Anillos</button>
+                    <button onclick="showSection('collares-waterproof')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Collares</button>
+                    <button onclick="showSection('pulseras-waterproof')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Pulseras</button>
+                    <button onclick="showSection('anillos-pareja')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Anillos</button>
                     <div class="text-xs font-semibold text-black py-1 mt-2">Joyería Pareja y Amistad</div>
-                    <button onclick="showSection('collares-pareja')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Collares</button>
-                    <button onclick="showSection('pulseras-pareja')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Pulseras</button>
-                    <button onclick="showSection('anillos-pareja')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Anillos</button>
+                    <button onclick="showSection('collares-pareja')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Collares</button>
+                    <button onclick="showSection('pulseras-pareja')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Pulseras</button>
+                    <button onclick="showSection('anillos-pareja')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Anillos</button>
                     <div class="text-xs font-semibold text-black py-1 mt-2">Joyería Casual</div>
-                    <button onclick="showSection('collares-casual')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Collares</button>
+                    <button onclick="showSection('collares-casual')" class="block py-1 text-sm text-gray-600 hover:text-[#cc9999]">Collares</button>
                     <!-- <a href="#" onclick="showSection('pulseras-casual')" class="block py-1 text-sm text-gray-600 hover:text-purple-600">Pulseras</a> -->
-                    <button onclick="showSection('accesorios')" class="block py-1 text-sm font-semibold text-gray-600 hover:text-purple-600 border-t pt-2 mt-2">Ver Todo</button>
+                    <button onclick="showSection('accesorios')" class="block py-1 text-sm font-semibold text-gray-600 hover:text-[#cc9999] border-t pt-2 mt-2">Ver Todo</button>
                 </div>
             </div>
-	<button onclick="showSection('Sale-page')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Sale</button>
-  <button onclick="showSection('seguimiento')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Seguimiento</button>
-  <button onclick="showSection('puntos')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Mis Puntos ⭐</button>
-  <button onclick="showSection('contacto')" class="block w-full text-left py-2 text-gray-700 hover:text-purple-600">Contáctanos</button>
+	<button onclick="showSection('Sale-page')" class="block w-full text-left py-2 text-gray-700 hover:text-[#cc9999]">Sale</button>
+  <button onclick="showSection('seguimiento')" class="block w-full text-left py-2 text-gray-700 hover:text-[#cc9999]">Seguimiento</button>
+  <button onclick="showSection('puntos')" class="block w-full text-left py-2 text-gray-700 hover:text-[#cc9999]">Mis Puntos ⭐</button>
+  <button onclick="showSection('contacto')" class="block w-full text-left py-2 text-gray-700 hover:text-[#cc9999]">Contáctanos</button>
         </div>
  	    </div>
 
@@ -7366,12 +7383,12 @@ document.addEventListener("DOMContentLoaded", () => {
   input.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      input.blur(); // Oculta teclado en móviles
+      input.blur();
       consultarPuntos();
     }
   });
 
-  // 🔹 Ocultar teclado también cuando se presiona el botón
+  // 🔹 Ejecutar con clic
   boton.addEventListener("click", () => {
     input.blur();
     consultarPuntos();
@@ -7387,53 +7404,62 @@ async function consultarPuntos() {
     return;
   }
 
+  // 🔄 Loader
   cont.innerHTML = `
-    <div class="flex flex-col items-center justify-center py-10 animate-pulse text-pink-500">
-      <div class="w-10 h-10 mb-3 border-4 border-pink-300 border-t-pink-500 rounded-full animate-spin"></div>
+    <div class="flex flex-col items-center justify-center py-10 animate-pulse text-[#cc9999]">
+      <div class="w-10 h-10 mb-3 border-4 border-[#e5c6c6] border-t-[#cc9999] rounded-full animate-spin"></div>
       <p>Consultando tus estrellas...</p>
     </div>`;
 
   try {
+    
     const res = await fetch(`/.netlify/functions/getPuntos?dni=${dni}`);
     const data = await res.json();
 
     if (data.estado === "No encontrado" || data.error) {
       cont.innerHTML = `<p class="text-red-500 font-semibold">❌ No se encontró ningún cliente con ese DNI.</p>`;
       return;
-    }
+    } 
 
     const estrellas = data.estrellas;
     const progreso = Math.min((estrellas / 6) * 100, 100);
 
     cont.innerHTML = `
-      <!-- 🧾 Tarjeta resumen del cliente -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto mb-6 transition-all duration-500">
-        <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
-        <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
-
-        <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
-          <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width:${progreso}%"></div>
+      <!-- 🌟 Tarjeta unificada -->
+      <div class="bg-white border border-[#fce7ef] rounded-2xl shadow-md p-8 max-w-4xl mx-auto transition-all duration-500 text-left">
+        <div class="text-center mb-6">
+          <h3 class="text-2xl font-bold text-gray-800">${data.nombre}</h3>
+          <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
         </div>
-        <p class="text-sm text-gray-500 mb-3">${estrellas} de 6 ⭐</p>
 
-        <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
-        <p class="text-xs text-gray-400">Última actualización: ${data.fecha}</p>
-      </div>
+        <!-- Barra de progreso (ahora centrada y con ancho limitado) -->
+<div class="flex justify-center mb-3">
+  <div class="w-full max-w-md"> <!-- <- ancho limitado aquí -->
+    <div class="progress-wrapper">
+  <div class="progress-bar bg-gray-200 rounded-full overflow-hidden">
+    <div class="progress-bar-inner" style="width:${progreso}%"></div>
+  </div>
+</div>
+    <p class="text-sm text-gray-500 mt-2 text-center">${estrellas} de 6 ⭐</p>
+  
+        <!-- Beneficio actual -->
+        <p class="text-lg font-semibold text-pink-500 text-center mb-4">${data.beneficio}</p>
+        <p class="text-xs text-gray-500 text-center mb-6">Última actualización: ${data.fecha}</p>
 
-      <!-- 🌟 Tarjeta de progreso (ancha) -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-5xl mx-auto transition-all duration-500 overflow-visible">
-        <h4 class="text-lg font-semibold text-gray-800 mb-4">Progreso hacia tus premios</h4>
-        <div class="reward-grid">
+        <!-- Tarjetas de progreso -->
+        <div class="reward-grid mb-6">
           ${renderRewardCards(estrellas)}
         </div>
-    </div>`;
+
+        
+      </div>`;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
   }
 }
 
-// 🧩 Renderizado visual con brillo en la última alcanzada
+// 🧩 Renderizado de las tarjetas de estrellas
 function renderRewardCards(estrellas) {
   const niveles = [
     { n: 1, icon: "⭐", label: "" },
@@ -7457,6 +7483,7 @@ function renderRewardCards(estrellas) {
   }).join('');
 }
 </script>
+
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977b68c7d3a456b3',t:'MTc1NjYzMTU3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
