@@ -1204,16 +1204,16 @@ input[type=number] {
     <div class="flex justify-center gap-3 mb-8">
       <input id="dni-cliente" type="number" placeholder="Ingresa tu DNI"
         class="border border-gray-300 rounded-lg px-4 py-2 w-64 focus:ring-2 focus:ring-pink-400 focus:outline-none text-center">
-      <button onclick="consultarPuntos()" class="bg-black hover:bg-[#cc9999] text-white px-6 py-2 rounded-lg transition font-medium">
+      <button id="btn-consultar-puntos" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg transition font-medium">
         Consultar ⭐
       </button>
     </div>
 
-    <!-- 🔹 Resultado dinámico -->
-    <div id="resultado-puntos" class="mt-6"></div>
+    <!-- 🔹 Resultado dinámico (tarjeta resumen + tarjetas de progreso) -->
+    <div id="resultado-puntos" class="mt-6 max-w-6xl mx-auto"></div>
 
     <!-- 🔹 Leyenda de recompensas -->
-    <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left">
+    <div class="mt-12 bg-white shadow-lg rounded-xl p-6 text-left max-w-xl mx-auto">
       <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">
         🎯 Beneficios por estrellas acumuladas
       </h3>
@@ -1223,11 +1223,12 @@ input[type=number] {
         <li><span class="emoji">🎉</span> <strong>6 estrellas:</strong> 20% de descuento VIP y prioridad en envíos.</li>
       </ul>
       <p class="text-xs text-gray-400 mt-4 text-center">
-        * Las estrellas se acumulan automáticamente con tus compras, beneficios disponbiles para tu proximo pedido.
+        * Las estrellas se acumulan automáticamente con tus compras, beneficios disponibles para tu próximo pedido.
       </p>
     </div>
   </div>
 </section>
+
 
 <!-- Sección Contacto -->
 <section id="contacto-section" class="section-content hidden py-16 bg-gray-50">
@@ -7356,22 +7357,21 @@ document.querySelectorAll("#mobile-menu button").forEach(btn => {
 });
 </script>
 
-<!-- ⚡ Script -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("dni-cliente");
-  const boton = document.querySelector("button[onclick='consultarPuntos()']");
+  const boton = document.getElementById("btn-consultar-puntos");
 
   // 🔹 Ejecutar con Enter (PC y móvil)
   input.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      input.blur(); // 🔸 Oculta teclado en móviles
+      input.blur(); // Oculta teclado en móviles
       consultarPuntos();
     }
   });
 
-  // 🔹 Ocultar teclado también cuando se presiona el botón en móviles
+  // 🔹 Ocultar teclado también cuando se presiona el botón
   boton.addEventListener("click", () => {
     input.blur();
     consultarPuntos();
@@ -7381,6 +7381,7 @@ document.querySelectorAll("#mobile-menu button").forEach(btn => {
 async function consultarPuntos() {
   const dni = document.getElementById("dni-cliente").value.trim();
   const cont = document.getElementById("resultado-puntos");
+
   if (!dni) {
     cont.innerHTML = `<p class="text-gray-500">Por favor, ingresa tu DNI.</p>`;
     return;
@@ -7395,6 +7396,7 @@ async function consultarPuntos() {
   try {
     const res = await fetch(`/.netlify/functions/getPuntos?dni=${dni}`);
     const data = await res.json();
+
     if (data.estado === "No encontrado" || data.error) {
       cont.innerHTML = `<p class="text-red-500 font-semibold">❌ No se encontró ningún cliente con ese DNI.</p>`;
       return;
@@ -7404,22 +7406,27 @@ async function consultarPuntos() {
     const progreso = Math.min((estrellas / 6) * 100, 100);
 
     cont.innerHTML = `
-  <div class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-5xl mx-auto transition-all duration-500 overflow-visible">
-    <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
-    <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
+      <!-- 🧾 Tarjeta resumen del cliente -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto mb-6 transition-all duration-500">
+        <h3 class="text-2xl font-bold text-gray-800 mb-1">${data.nombre}</h3>
+        <p class="text-gray-500 text-sm mb-4">DNI: ${data.dni}</p>
 
-    <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
-      <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width:${progreso}%"></div>
-    </div>
-    <p class="text-sm text-gray-500 mb-3">${estrellas} de 6 ⭐</p>
+        <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
+          <div class="bg-pink-500 h-3 rounded-full transition-all duration-700" style="width:${progreso}%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mb-3">${estrellas} de 6 ⭐</p>
 
-    <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
-    <p class="text-xs text-gray-400 mb-4">Última actualización: ${data.fecha}</p>
+        <p class="text-lg font-semibold text-pink-600 mb-2">${data.beneficio}</p>
+        <p class="text-xs text-gray-400">Última actualización: ${data.fecha}</p>
+      </div>
 
-    <div class="reward-grid">
-      ${renderRewardCards(estrellas)}
-    </div>
-  </div>`;
+      <!-- 🌟 Tarjeta de progreso (ancha) -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 max-w-5xl mx-auto transition-all duration-500 overflow-visible">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Progreso hacia tus premios</h4>
+        <div class="reward-grid">
+          ${renderRewardCards(estrellas)}
+        </div>
+      </div>`;
   } catch (err) {
     cont.innerHTML = `<p class="text-red-500">⚠️ Error al consultar tus puntos. Intenta nuevamente.</p>`;
     console.error(err);
@@ -7450,7 +7457,6 @@ function renderRewardCards(estrellas) {
   }).join('');
 }
 </script>
-
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977b68c7d3a456b3',t:'MTc1NjYzMTU3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
