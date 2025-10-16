@@ -103,11 +103,11 @@ html, body {
 <style>
 /* 🌟 Contenedor de tarjetas (grid base y flex adaptable) */
 .reward-grid {
-  display: flex;
-  flex-wrap: wrap;           /* Permite varias filas si es necesario */
-  justify-content: center;   /* Centra las tarjetas */
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* ✅ en móviles 2–3 por fila */
   gap: 1rem;
+  justify-items: center;
+  align-items: stretch;
   margin-top: 1.2rem;
   padding: 1rem;
   box-sizing: border-box;
@@ -116,19 +116,20 @@ html, body {
 /* 💻 En pantallas grandes: una sola fila centrada y contenida */
 @media (min-width: 1024px) {
   .reward-grid {
-    flex-wrap: nowrap;        /* 🔒 Mantiene una sola fila */
+    display: flex;             /* 🔄 volvemos a flex para PC */
+    flex-wrap: nowrap;
     justify-content: center;
     gap: 1.2rem;
     padding: 1rem 1.5rem;
-    max-width: 950px;         /* 🔹 Evita que sobresalgan */
+    max-width: 950px;
     margin-left: auto;
     margin-right: auto;
   }
 
   .reward-card {
-    flex: 1 1 150px;          /* 🔸 Tamaño más equilibrado */
+    flex: 1 1 150px;
     min-width: 140px;
-    max-width: 180px;         /* 🔹 más largas */
+    max-width: 180px;
   }
 }
 
@@ -136,16 +137,16 @@ html, body {
 .reward-card {
   background: #f9fafb;
   border-radius: 1rem;
-  padding: 1rem 0.6rem;       /* 🔹 más espacio interior */
+  padding: 1rem 0.6rem;
   text-align: center;
   transition: all 0.3s ease;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   position: relative;
   overflow: hidden;
   width: 100%;
-  min-width: 120px;
+  min-width: 100px;
   max-width: 180px;
-  min-height: 130px;          /* 🔹 altura consistente */
+  min-height: 130px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -172,11 +173,11 @@ html, body {
   font-weight: 600;
 }
 
-/* 🔹 Tarjetas intermedias (ahora mismas dimensiones) */
+/* 🔹 Tarjetas intermedias (mismo tamaño que las demás) */
 .reward-card.mid {
   background: #f1f5f9;
   font-weight: 500;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /* 🔸 Tarjetas alcanzadas */
@@ -185,7 +186,7 @@ html, body {
   background: #fff5f8;
 }
 
-/* ✨ Brillo animado para la última estrella */
+/* ✨ Brillo animado */
 .reward-card.glow {
   animation: glowPulse 2s ease-in-out infinite;
   border: 2px solid #fb7185;
@@ -203,7 +204,7 @@ html, body {
   }
 }
 
-/* 🧭 Barra de progreso centrada y más corta */
+/* 🧭 Barra de progreso centrada */
 .progress-wrapper {
   display: flex;
   justify-content: center;
@@ -212,7 +213,7 @@ html, body {
 
 .progress-bar {
   width: 100%;
-  max-width: 320px;  /* 🔹 ajusta el largo aquí (sm=280, md=320, lg=380) */
+  max-width: 320px;
 }
 
 .progress-bar-inner {
