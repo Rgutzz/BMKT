@@ -124,6 +124,26 @@ html, body {
   margin-top: 1.2rem;
   justify-items: center;
 }
+
+/* 💻 En pantallas grandes: una sola fila horizontal */
+@media (min-width: 1024px) {
+  .reward-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+  }
+  .reward-card {
+    flex: 0 0 auto;
+    width: 130px;
+    scroll-snap-align: start;
+  }
+}
+
+/* Tarjeta base */
 .reward-card {
   background: #f9fafb;
   border-radius: 1rem;
@@ -166,6 +186,7 @@ html, body {
   border: 2px solid #fb7185;
   box-shadow: 0 0 15px rgba(251,113,133,0.6);
 }
+
 @keyframes glowPulse {
   0%, 100% {
     box-shadow: 0 0 8px rgba(251,113,133,0.3);
@@ -177,6 +198,7 @@ html, body {
   }
 }
 </style>
+
 
 <!-- Estilos acordeón -->
 <style>
