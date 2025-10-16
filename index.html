@@ -7050,6 +7050,9 @@ function showSection(sectionName, pushHistory = true) {
       }, 250);
     }
   }
+   if (sectionName === "resumen") {
+    loadCartSummary();
+  }
 }
 
 async function sendOrder(method) {
