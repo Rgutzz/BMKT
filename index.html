@@ -6937,26 +6937,27 @@ carousel.addEventListener("scroll", () => updateFeaturedDots());
   });
 </script>
 <script>
-/* Manejador del botón "atrás" / gesto retroceso */
+// 🧭 Control de navegación sin forzar "#inicio"
 window.addEventListener('popstate', function (event) {
   const sec = (event.state && event.state.section)
     ? event.state.section
     : (location.hash ? location.hash.replace('#','') : 'inicio');
-  // Mostrar la sección sin empujar otra entrada (evitamos loop)
   showSection(sec, false);
 });
 
-/* Inicialización al cargar la página:
-   - Detecta si fue una recarga (F5 / Ctrl+R) y vuelve a "inicio"
-   - Si no fue recarga, muestra la sección del hash normalmente
-*/
 document.addEventListener('DOMContentLoaded', function () {
   const hash = location.hash ? location.hash.replace('#','') : 'inicio';
 
-  try {
-    history.replaceState({ section: hash }, '', '#' + hash);
-    history.pushState({ section: hash }, '', '#' + hash);
-  } catch (e) { /* ignore */ }
+  // 🔹 Evita agregar #inicio en la URL si no existe
+  if (location.hash) {
+    try {
+      history.replaceState({ section: hash }, '', location.hash);
+    } catch (e) {}
+  } else {
+    try {
+      history.replaceState({ section: 'inicio' }, '', location.pathname);
+    } catch (e) {}
+  }
 
   // --- Detección de recarga (F5 / Ctrl+R) ---
   let isReload = false;
@@ -6965,20 +6966,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (navEntries && navEntries.length > 0) {
       isReload = navEntries[0].type === 'reload';
     } else if (performance.navigation) {
-      isReload = performance.navigation.type === 1; // modo legacy
+      isReload = performance.navigation.type === 1;
     }
-  } catch (e) { }
+  } catch (e) {}
 
-  // ✅ Solo si se recargó estando en "detalle-producto", volver a inicio
+  // ✅ Si recargó en "detalle-producto", vuelve a inicio
   if (isReload && hash === 'product-detail') {
-    try { history.replaceState({ section: 'inicio' }, '', '#inicio'); } catch(e){}
+    try { history.replaceState({ section: 'inicio' }, '', location.pathname); } catch(e){}
     showSection('inicio', false);
   } else {
-    // En cualquier otro caso, mostrar normalmente la sección actual
+    // 🔹 Muestra la sección actual (sin alterar la URL base)
     showSection(hash, false);
   }
 });
 </script>
+
 
 
 <!-- 🔽 Script corregido del resumen de compra -->
