@@ -294,6 +294,34 @@ input[type=number] {
     }
   </style>
 
+
+<style id="stable-product-layout-fix">
+/* Cuadrículas estables para categorías y listados de productos.
+   No se aplica al carrusel de destacados ni a la ficha individual. */
+.stable-category-grid,
+.stable-product-grid {
+  display: grid !important;
+  width: 100% !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch;
+}
+
+.stable-category-grid > *,
+.stable-product-grid > * {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  flex: none !important;
+}
+
+@media (min-width: 768px) {
+  .stable-category-grid,
+  .stable-product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+</style>
+
 </head>
 <body class="bg-gray-50">
   
@@ -686,7 +714,7 @@ input[type=number] {
     <!-- Contenedor principal -->
     <div class="flex justify-center">
       <!-- Grid para móviles y pantallas medianas / Flex solo en pantallas grandes -->
-      <div class="grid grid-cols-2 gap-4 md:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:items-stretch">
+      <div class="stable-category-grid grid grid-cols-2 gap-4 md:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:items-stretch">
 
         <!-- Tarjeta Ropa -->
 <div class="rounded-2xl cursor-pointer overflow-hidden w-full lg:w-[450px] flex-shrink-0 group"
@@ -1465,7 +1493,7 @@ input[type=number] {
   </h2>
 
   <!-- Grid en móvil, Flex en pantallas grandes -->
-  <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
     <!-- Tarjeta Crop Top Básico -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('crop-top-basico')">
@@ -1505,7 +1533,7 @@ input[type=number] {
   </h2>
   
   <!-- Grid en móvil, Flex en pantallas grandes -->
-  <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
     
     <!-- Polo Oversize Básico -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('polo-oversize-mujer-basico')">
@@ -1543,7 +1571,7 @@ input[type=number] {
     Polos Semi Oversize
   </h2>
   
-  <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
     
     <!-- Polo Semi Oversize Casual -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('polo-semi-oversize-casual')">
@@ -1579,7 +1607,7 @@ input[type=number] {
     Baby Tees
   </h2>
   
-  <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
     
     <!-- Baby Tee Básico -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('baby-tee-basico')">
@@ -1616,7 +1644,7 @@ input[type=number] {
     Poleras
   </h2>
 
-  <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
     <!-- Polera Manga Larga -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('polera-manga-larga')">
@@ -1655,7 +1683,7 @@ input[type=number] {
     Faldas
   </h2>
 
-  <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
     <!-- Falda Mini -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('falda-mini')">
@@ -1695,7 +1723,7 @@ input[type=number] {
   <!-- Contenedor principal -->
   <div class="flex justify-center">
     <!-- Grid hasta pantallas medianas, flex solo en pantallas grandes -->
-    <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+    <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
       <!-- Polo Oversize Unisex No Detour -->
       <div class="cursor-pointer w-full lg:w-[450px] flex-shrink-0"
@@ -1772,7 +1800,7 @@ input[type=number] {
             </button>
             <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Crop Tops</h1>
 
-            <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+            <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
                 <!-- Crop Top Básico -->
                 <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('crop-top-basico')">
@@ -1820,7 +1848,7 @@ input[type=number] {
             </button>
             <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Polos Oversize - Mujer</h1>
 
-            <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+            <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
                 <!-- Polo Oversize Básico -->
                 <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('polo-oversize-mujer-basico')">
@@ -1868,7 +1896,7 @@ input[type=number] {
             </button>
             <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Polos Semi Oversize</h1>
 
-            <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+            <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
                 <!-- Polo Semi Oversize Casual -->
                 <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('polo-semi-oversize-casual')">
@@ -1916,7 +1944,7 @@ input[type=number] {
             </button>
             <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Baby Tees</h1>
 
-            <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+            <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
                 <!-- Baby Tee Básico -->
                 <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('baby-tee-basico')">
@@ -1963,7 +1991,7 @@ input[type=number] {
             </button>
             <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Poleras</h1>
 
-            <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+            <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
                 <!-- Polera Manga Larga -->
                 <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('polera-manga-larga')">
@@ -2011,7 +2039,7 @@ input[type=number] {
       </button>
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Faldas</h1>
 
-      <div class="grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
+      <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row justify-start items-start gap-3 sm:gap-4">
 
         <!-- Falda Mini -->
         <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('falda-mini')">
@@ -2055,7 +2083,7 @@ input[type=number] {
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Polos Oversize - Unisex</h1>
 
       <!-- Grid para móviles y flex en pantallas grandes -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
         <!-- Polo Oversize No Detour -->
         <div class="cursor-pointer w-full lg:w-[450px] flex-shrink-0" onclick="showProductDetail('polo-oversize-unisex-basico')">
@@ -2129,7 +2157,7 @@ input[type=number] {
   </h2>
    
   <!-- Grid en móvil, Flex en pantallas grandes -->
-  <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+  <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
     <!-- Collar Cadena Waterproof -->
     <div class="cursor-pointer w-full lg:w-[455px] flex-shrink-0" onclick="showProductDetail('ollar-waterproof-chunky')">
@@ -2356,7 +2384,7 @@ input[type=number] {
   </h2>
   
   <!-- Grid en móvil, Flex en pantallas grandes -->
-  <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+  <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
     <!-- Collar duo corazon -->
     <div class="cursor-pointer w-full lg:w-[455px] flex-shrink-0" onclick="showProductDetail('collar-pareja-duocorazon')">
@@ -2570,7 +2598,7 @@ input[type=number] {
 <div class="mb-12">
   <h2 class="text-2xl font-semibold mb-6 text-black border-b border-gray-300 pb-2">Joyería Casual</h2>
   
-  <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+  <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
     <!-- Collar doble capa -->
     <div class="cursor-pointer w-full lg:w-[455px] flex-shrink-0" onclick="showProductDetail('collar-casual-doblecapa')">
@@ -2671,7 +2699,7 @@ input[type=number] {
 <div class="mb-12" hidden>
   <h2 class="text-2xl font-semibold mb-6 text-black border-b-2 border-purple-200 pb-2">Packs Accesorios</h2>
   
-  <div class="grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap justify-start items-start gap-3 sm:gap-4">
+  <div class="stable-product-grid grid grid-cols-2 sm:flex sm:flex-row sm:flex-wrap justify-start items-start gap-3 sm:gap-4">
 
     <!-- Anillo Dorado -->
     <div class="cursor-pointer max-w-[320px]" onclick="showProductDetail('anillo-dorado')">
@@ -2770,7 +2798,7 @@ input[type=number] {
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Collares Waterproof</h1>
 
          <!-- Grid hasta pantallas medianas, flex solo en pantallas grandes -->
-    <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+    <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
         <!-- Collar Cadena -->
         <div class="cursor-pointer max-w-[455px] w-full" onclick="showProductDetail('collar-waterproof-chunky')">
@@ -2927,7 +2955,7 @@ input[type=number] {
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Pulseras Waterproof</h1>
 
       <!-- Grid en móviles, flex en pantallas grandes -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
         <!-- Pulsera Eslabones -->
         <div class="cursor-pointer max-w-[455px] w-full" onclick="showProductDetail('pulsera-waterproof-eslabones')">
@@ -3039,7 +3067,7 @@ input[type=number] {
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Collares Pareja y Amistad</h1>
 
       <!-- Grid en móviles, flex en pantallas grandes -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
         <!-- Collar duo corazon -->
     <div class="cursor-pointer max-w-[455px]" onclick="showProductDetail('collar-pareja-duocorazon')">
@@ -3172,7 +3200,7 @@ input[type=number] {
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Pulseras Pareja y Amistad</h1>
 
       <!-- Grid en móviles, flex en pantallas grandes -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
         <!-- Pulsera corazon magnetico -->
     <div class="cursor-pointer max-w-[455px]" onclick="showProductDetail('pulsera-pareja-corazonmagnetico')">
@@ -3264,7 +3292,7 @@ input[type=number] {
       </h1>
 
       <!-- Contenedor tarjetas -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
         
         <!-- Anillo electrograma  -->
     <div class="cursor-pointer max-w-[455px]" onclick="showProductDetail('anillo-pareja-electrograma')">
@@ -3312,7 +3340,7 @@ input[type=number] {
       <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Collares Casual</h1>
 
       <!-- Contenedor flex para tarjetas -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
         
         <!-- Collar doble capa -->
     <div class="cursor-pointer max-w-[455px]" onclick="showProductDetail('collar-casual-doblecapa')">
@@ -3465,7 +3493,7 @@ input[type=number] {
 
    
       <!-- Grid en móviles, flex en pantallas grandes -->
-      <div class="grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
+      <div class="stable-product-grid grid grid-cols-2 gap-3 md:gap-4 lg:flex lg:flex-wrap lg:justify-start lg:items-stretch">
 
         <!-- Producto -->
         <div class="cursor-pointer max-w-[450px] group" onclick="showProductDetail('collar-casual-doblecapa')">
