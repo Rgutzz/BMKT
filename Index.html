@@ -320,6 +320,14 @@ input[type=number] {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 }
+
+/* Evita mostrar datos antiguos de las tarjetas antes de sincronizar Google Sheets. */
+[onclick*="showProductDetail("]:not(.inventory-data-ready) h3,
+[onclick*="showProductDetail("]:not(.inventory-data-ready) h4,
+[onclick*="showProductDetail("]:not(.inventory-data-ready) p,
+[onclick*="showProductDetail("]:not(.inventory-data-ready) span {
+  visibility: hidden !important;
+}
 </style>
 
 </head>
@@ -7440,7 +7448,7 @@ function updateProductCardsFromData() {
 
         const productKey = match[1];
         const product = products[productKey];
-        if (!product || seen.has(card)) return;
+        if (!product || !product.__sheetSynced || seen.has(card)) return;
         seen.add(card);
 
         // Nombre, descripción corta y código (cuando la tarjeta ya tiene esos campos).
@@ -7449,8 +7457,12 @@ function updateProductCardsFromData() {
             titleEl.textContent = product.name;
             titleEl.title = product.name;
         }
-        const descEl = card.querySelector(".product-description, [data-product-description]");
-        if (descEl && product.description) descEl.textContent = product.description;
+        const descEl = card.querySelector(".product-description, [data-product-description]") ||
+            Array.from(card.querySelectorAll("p")).find(el => {
+                const text = (el.textContent || "").trim();
+                return text && !/^BMKT[\w-]*/i.test(text) && !/S\/\s*\d/.test(text);
+            });
+        if (descEl) descEl.textContent = product.description || "";
 
         // Se conservan las fotos originales del HTML en TODAS las secciones.
         // Google Sheets sigue actualizando nombres, descripciones y precios,
@@ -7465,16 +7477,25 @@ function updateProductCardsFromData() {
 
         const price = Number(String(product.price ?? "").replace(",", "."));
         const oldPrice = Number(String(product.oldPrice ?? "").replace(",", "."));
-        if (priceEl && Number.isFinite(price)) {
-            if (product.oldPrice !== "" && product.oldPrice !== null &&
-                product.oldPrice !== undefined && Number.isFinite(oldPrice) && oldPrice > price) {
-                priceEl.innerHTML =
-                    `<span class="text-red-600 font-bold">S/ ${price.toFixed(2)}</span> ` +
-                    `<span class="line-through text-gray-400 text-xs ml-1">S/ ${oldPrice.toFixed(2)}</span>`;
+        if (priceEl) {
+            if (product.price !== "" && product.price !== null &&
+                product.price !== undefined && Number.isFinite(price)) {
+                if (product.oldPrice !== "" && product.oldPrice !== null &&
+                    product.oldPrice !== undefined && Number.isFinite(oldPrice) && oldPrice > price) {
+                    priceEl.innerHTML =
+                        `<span class="text-red-600 font-bold">S/ ${price.toFixed(2)}</span> ` +
+                        `<span class="line-through text-gray-400 text-xs ml-1">S/ ${oldPrice.toFixed(2)}</span>`;
+                } else {
+                    priceEl.textContent = `S/ ${price.toFixed(2)}`;
+                }
             } else {
-                priceEl.textContent = `S/ ${price.toFixed(2)}`;
+                // Nunca revelar el precio fijo del HTML si Sheets no devolvió uno válido.
+                priceEl.textContent = "Precio no disponible";
             }
         }
+
+        // La tarjeta se revela solo después de actualizar sus datos dinámicos.
+        card.classList.add("inventory-data-ready");
         updated++;
     });
 
@@ -7489,7 +7510,11 @@ async function syncProductsFromGoogleSheets() {
         const unmatched = [];
 
         // El HTML ya no contiene cantidades de stock fijas: el stock viene de Sheets.
-        for (const product of Object.values(products)) product.stockByVariant = {};
+        // Marca cada producto como pendiente hasta confirmar su correspondencia en Sheets.
+        for (const product of Object.values(products)) {
+            product.stockByVariant = {};
+            product.__sheetSynced = false;
+        }
 
         for (const [localKey, product] of Object.entries(products)) {
             let row = byId.get(String(product.id ?? localKey).trim());
@@ -7508,6 +7533,7 @@ async function syncProductsFromGoogleSheets() {
                 unmatched.push(`${localKey} (${product.name || "sin nombre"})`);
                 continue;
             }
+            product.__sheetSynced = true;
 
             // Importar todos los campos editables desde Sheets, manteniendo el objeto
             // del producto como estructura base para no romper la interfaz.
