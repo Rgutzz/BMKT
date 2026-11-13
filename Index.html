@@ -827,7 +827,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Polo Oversize No Detour</h3>
-            <span class="text-sm font-bold text-black">S/ 43.00</span>
+            <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -847,7 +847,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Polo Oversize Purpose</h3>
-              <span class="text-sm font-bold text-black">S/ 43.00</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -867,7 +867,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Polo Oversize Resilient</h3>
-              <span class="text-sm font-bold text-black">S/ 43.00</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -887,7 +887,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Polo Oversize Pace</h3>
-              <span class="text-sm font-bold text-black">S/ 43.00</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -907,7 +907,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Pulsera Eslabones Corazón</h3>
-              <span class="text-sm font-bold text-black">S/ 45.00</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -927,7 +927,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Collar Magnético Corazón</h3>
-              <span class="text-sm font-bold text-black">S/ 29.90</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -948,7 +948,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Collar Dije Mixto Corazón</h3>
-              <span class="text-sm font-bold text-black">S/ 49.90</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -968,7 +968,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Collar The World Is Yours</h3>
-              <span class="text-sm font-bold text-black">S/ 35.00</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -988,7 +988,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Collar Magnético Mariposas</h3>
-              <span class="text-sm font-bold text-black">S/ 32.50</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -1008,7 +1008,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Collar Dragon Cristal Rojo</h3>
-              <span class="text-sm font-bold text-black">S/ 34.90</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -1028,7 +1028,7 @@ input[type=number] {
             </div>
             <div class="p-3 text-center">
               <h3 class="text-sm font-medium text-gray-800 truncate">Anillo Parejas Electrograma</h3>
-              <span class="text-sm font-bold text-black">S/ 24.90</span>
+              <span class="text-sm font-bold text-black">Cargando...</span>
             </div>
           </div>
         </div>
@@ -6325,16 +6325,9 @@ function sendWhatsAppOrder() {
 // Devuelve una versión pequeña de Imgur para las miniaturas del detalle.
 // La imagen principal conserva siempre la URL original y su calidad completa.
 function getThumbnailUrl(imageUrl) {
-    if (typeof imageUrl !== "string") return imageUrl;
-    try {
-        const url = new URL(imageUrl, window.location.href);
-        if (url.hostname === "i.imgur.com") {
-            url.pathname = url.pathname.replace(/\.(jpe?g|png)$/i, "t.$1");
-        }
-        return url.href;
-    } catch (error) {
-        return imageUrl;
-    }
+    // Usar la imagen original evita variantes de Imgur que pueden recortar la foto.
+    // El ajuste visual se hace con object-fit: contain dentro del cuadro de 80x80.
+    return imageUrl;
 }
 
 function showProductDetail(productId) {
@@ -6380,9 +6373,9 @@ function showProductDetail(productId) {
     // Miniaturas
     const thumbnailsEl = document.getElementById('thumbnails');
     thumbnailsEl.innerHTML = product.images?.map((img, i) => `
-        <div class="thumbnail ${i===0 ? 'active' : ''} overflow-hidden flex-shrink-0 border rounded-lg" 
+        <div class="thumbnail ${i===0 ? 'active' : ''} overflow-hidden flex-shrink-0 border rounded-lg flex items-center justify-center" 
              onclick="changeMainImage(this)" data-image="${img}">
-            <img src="${getThumbnailUrl(img)}" alt="Vista ${i+1}" loading="eager" decoding="async" fetchpriority="low" class="w-32 h-32 object-cover rounded-lg">
+            <img src="${getThumbnailUrl(img)}" alt="Vista ${i+1}" loading="eager" decoding="async" fetchpriority="low" class="w-full h-full object-contain rounded-md bg-white">
         </div>
     `).join('') || '';
 
@@ -6483,9 +6476,9 @@ function selectColor(el, colorName) {
 
     const thumbnailsEl = document.getElementById('thumbnails');
     thumbnailsEl.innerHTML = product.images.map((img, i) => `
-        <div class="thumbnail ${img === (product.imagesByColor?.[colorName]?.[0] || product.images[0]) ? 'active' : ''} overflow-hidden flex-shrink-0 border rounded-lg" 
+        <div class="thumbnail ${img === (product.imagesByColor?.[colorName]?.[0] || product.images[0]) ? 'active' : ''} overflow-hidden flex-shrink-0 border rounded-lg flex items-center justify-center" 
              onclick="changeMainImage(this)" data-image="${img}">
-            <img src="${getThumbnailUrl(img)}" alt="Vista ${i+1}" loading="eager" decoding="async" fetchpriority="low" class="w-20 h-20 object-cover rounded-lg">
+            <img src="${getThumbnailUrl(img)}" alt="Vista ${i+1}" loading="eager" decoding="async" fetchpriority="low" class="w-full h-full object-contain rounded-md bg-white">
         </div>
     `).join('');
 
