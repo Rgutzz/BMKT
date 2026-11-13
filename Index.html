@@ -6321,6 +6321,22 @@ function sendWhatsAppOrder() {
 // =======================
 // Mostrar detalle producto
 // =======================
+
+// Devuelve una versión pequeña de Imgur para las miniaturas del detalle.
+// La imagen principal conserva siempre la URL original y su calidad completa.
+function getThumbnailUrl(imageUrl) {
+    if (typeof imageUrl !== "string") return imageUrl;
+    try {
+        const url = new URL(imageUrl, window.location.href);
+        if (url.hostname === "i.imgur.com") {
+            url.pathname = url.pathname.replace(/\.(jpe?g|png)$/i, "t.$1");
+        }
+        return url.href;
+    } catch (error) {
+        return imageUrl;
+    }
+}
+
 function showProductDetail(productId) {
     currentProduct = productId;
     const product = products[productId];
@@ -6366,7 +6382,7 @@ function showProductDetail(productId) {
     thumbnailsEl.innerHTML = product.images?.map((img, i) => `
         <div class="thumbnail ${i===0 ? 'active' : ''} overflow-hidden flex-shrink-0 border rounded-lg" 
              onclick="changeMainImage(this)" data-image="${img}">
-            <img src="${img}" alt="Vista ${i+1}" class="w-32 h-32 object-cover rounded-lg">
+            <img src="${getThumbnailUrl(img)}" alt="Vista ${i+1}" loading="eager" decoding="async" fetchpriority="low" class="w-32 h-32 object-cover rounded-lg">
         </div>
     `).join('') || '';
 
@@ -6469,7 +6485,7 @@ function selectColor(el, colorName) {
     thumbnailsEl.innerHTML = product.images.map((img, i) => `
         <div class="thumbnail ${img === (product.imagesByColor?.[colorName]?.[0] || product.images[0]) ? 'active' : ''} overflow-hidden flex-shrink-0 border rounded-lg" 
              onclick="changeMainImage(this)" data-image="${img}">
-            <img src="${img}" alt="Vista ${i+1}" class="w-20 h-20 object-cover rounded-lg">
+            <img src="${getThumbnailUrl(img)}" alt="Vista ${i+1}" loading="eager" decoding="async" fetchpriority="low" class="w-20 h-20 object-cover rounded-lg">
         </div>
     `).join('');
 
@@ -7570,80 +7586,109 @@ function escapeTestimonialHTML(value) {
     }[char]));
 }
 
-async function cargarTestimoniosDesdeSheets() {
+const TESTIMONIOS_CACHE_KEY = "bmarket_testimonios_cache_v1";
+
+function mostrarTestimonios(rows) {
     const container = document.getElementById("testimonials-container");
     const dotsContainer = document.getElementById("testimonials-dots");
-    if (!container || !dotsContainer) return;
+    if (!container || !dotsContainer || !Array.isArray(rows)) return;
 
+    const validos = rows.filter(item => item && item.name && item.comment);
+    if (!validos.length) {
+        container.innerHTML = '<p class="text-gray-500 text-center">Pronto compartiremos las opiniones de nuestros clientes.</p>';
+        dotsContainer.innerHTML = "";
+        return;
+    }
+
+    const avatarColors = ["bg-purple-500", "bg-blue-500", "bg-pink-500", "bg-green-500", "bg-indigo-500", "bg-red-500", "bg-amber-500"];
+    container.classList.remove("flex", "items-center", "justify-center");
+    container.innerHTML = validos.map((item, index) => {
+        const name = escapeTestimonialHTML(item.name);
+        const comment = escapeTestimonialHTML(item.comment);
+        const status = escapeTestimonialHTML(item.status || "Cliente verificado");
+        const initial = escapeTestimonialHTML(String(item.name).trim().charAt(0).toUpperCase());
+        const rawStars = Number(item.stars);
+        const stars = Number.isFinite(rawStars) ? Math.max(0, Math.min(5, Math.round(rawStars))) : 5;
+        const starsHTML = Array.from({ length: 5 }, (_, i) =>
+            `<i class="${i < stars ? "fas" : "far"} fa-star"></i>`
+        ).join("");
+        return `<div class="testimonial-slide ${index === 0 ? "active" : ""} text-center">
+            <div class="flex justify-center mb-4"><div class="flex text-yellow-400 text-xl">${starsHTML}</div></div>
+            <p class="text-lg text-gray-700 mb-6 italic">&ldquo;${comment}&rdquo;</p>
+            <div class="flex items-center justify-center">
+                <div class="w-12 h-12 ${avatarColors[index % avatarColors.length]} rounded-full flex items-center justify-center text-white font-bold mr-4">${initial}</div>
+                <div class="text-left"><h4 class="font-semibold">${name}</h4><p class="text-gray-500">${status}</p></div>
+            </div>
+        </div>`;
+    }).join("");
+
+    dotsContainer.innerHTML = validos.map((_, index) =>
+        `<button type="button" aria-label="Ver testimonio ${index + 1}" onclick="goToTestimonial(${index})" class="testimonial-dot w-3 h-3 rounded-full ${index === 0 ? "bg-purple-600" : "bg-gray-300"}"></button>`
+    ).join("");
+    currentTestimonial = 0;
+    refreshTestimonialElements();
+    showTestimonial(0);
+}
+
+async function cargarTestimoniosDesdeSheets() {
     try {
         const response = await fetch(INVENTARIO_WEB_URL + "?tipo=testimonios&t=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error("HTTP " + response.status);
         const rows = await response.json();
         if (!Array.isArray(rows)) throw new Error("La respuesta de testimonios no es una lista.");
 
-        const validos = rows.filter(item => item && item.name && item.comment);
-        if (!validos.length) {
-            container.innerHTML = '<p class="text-gray-500 text-center">Pronto compartiremos las opiniones de nuestros clientes.</p>';
-            dotsContainer.innerHTML = "";
-            return;
+        mostrarTestimonios(rows);
+        try {
+            localStorage.setItem(TESTIMONIOS_CACHE_KEY, JSON.stringify({
+                savedAt: Date.now(),
+                rows: rows
+            }));
+        } catch (cacheError) {
+            console.warn("[BMARKET] No se pudo guardar la caché de testimonios:", cacheError);
         }
-
-        const avatarColors = ["bg-purple-500", "bg-blue-500", "bg-pink-500", "bg-green-500", "bg-indigo-500", "bg-red-500", "bg-amber-500"];
-        container.classList.remove("flex", "items-center", "justify-center");
-        container.innerHTML = validos.map((item, index) => {
-            const name = escapeTestimonialHTML(item.name);
-            const comment = escapeTestimonialHTML(item.comment);
-            const status = escapeTestimonialHTML(item.status || "Cliente verificado");
-            const initial = escapeTestimonialHTML(String(item.name).trim().charAt(0).toUpperCase());
-            const rawStars = Number(item.stars);
-            const stars = Number.isFinite(rawStars) ? Math.max(0, Math.min(5, Math.round(rawStars))) : 5;
-            const starsHTML = Array.from({ length: 5 }, (_, i) =>
-                `<i class="${i < stars ? "fas" : "far"} fa-star"></i>`
-            ).join("");
-            return `<div class="testimonial-slide ${index === 0 ? "active" : ""} text-center">
-                <div class="flex justify-center mb-4"><div class="flex text-yellow-400 text-xl">${starsHTML}</div></div>
-                <p class="text-lg text-gray-700 mb-6 italic">&ldquo;${comment}&rdquo;</p>
-                <div class="flex items-center justify-center">
-                    <div class="w-12 h-12 ${avatarColors[index % avatarColors.length]} rounded-full flex items-center justify-center text-white font-bold mr-4">${initial}</div>
-                    <div class="text-left"><h4 class="font-semibold">${name}</h4><p class="text-gray-500">${status}</p></div>
-                </div>
-            </div>`;
-        }).join("");
-
-        dotsContainer.innerHTML = validos.map((_, index) =>
-            `<button type="button" aria-label="Ver testimonio ${index + 1}" onclick="goToTestimonial(${index})" class="testimonial-dot w-3 h-3 rounded-full ${index === 0 ? "bg-purple-600" : "bg-gray-300"}"></button>`
-        ).join("");
-        currentTestimonial = 0;
-        refreshTestimonialElements();
-        showTestimonial(0);
     } catch (error) {
         console.error("[BMARKET] No se pudieron cargar los testimonios:", error);
-        container.innerHTML = '<p class="text-gray-500 text-center">No se pudieron cargar las opiniones en este momento.</p>';
-        dotsContainer.innerHTML = "";
+        const container = document.getElementById("testimonials-container");
+        const dotsContainer = document.getElementById("testimonials-dots");
+        if (container && !container.querySelector(".testimonial-slide")) {
+            container.innerHTML = '<p class="text-gray-500 text-center">No se pudieron cargar las opiniones en este momento.</p>';
+        }
+        if (dotsContainer && !container?.querySelector(".testimonial-slide")) dotsContainer.innerHTML = "";
     }
+}
+
+function iniciarTestimoniosRapido() {
+    const container = document.getElementById("testimonials-container");
+    const dotsContainer = document.getElementById("testimonials-dots");
+
+    // Mostrar de inmediato la última copia guardada, sin esperar a Google Sheets.
+    try {
+        const cached = JSON.parse(localStorage.getItem(TESTIMONIOS_CACHE_KEY) || "null");
+        if (cached && Array.isArray(cached.rows)) mostrarTestimonios(cached.rows);
+    } catch (error) {
+        console.warn("[BMARKET] Caché de testimonios no disponible:", error);
+    }
+
+    // Si no hay caché, mantener el mensaje de carga mientras se consulta Sheets.
+    if (!container?.querySelector(".testimonial-slide") && container && !container.querySelector("#testimonials-loading")) {
+        container.innerHTML = '<p id="testimonials-loading" class="text-gray-500">Cargando opiniones de nuestros clientes...</p>';
+    }
+
+    // Consultar temprano, sin esperar a window.load (que puede tardar por las imágenes).
+    setTimeout(cargarTestimoniosDesdeSheets, 250);
 }
 
 window.getData = getData;
 
-function iniciarTestimoniosDespuesDeCarga() {
-    const cargar = () => setTimeout(cargarTestimoniosDesdeSheets, 500);
-    if (document.readyState === "complete") {
-        cargar();
-    } else {
-        window.addEventListener("load", cargar, { once: true });
-    }
-}
-
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
         syncProductsFromGoogleSheets();
-        iniciarTestimoniosDespuesDeCarga();
-    });
+        iniciarTestimoniosRapido();
+    }, { once: true });
 } else {
     syncProductsFromGoogleSheets();
-    iniciarTestimoniosDespuesDeCarga();
+    iniciarTestimoniosRapido();
 }
-
 
 // La función showProductDetail original ya está declarada globalmente.
 // No crear un wrapper recursivo.
