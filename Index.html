@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Conexiones anticipadas para acelerar recursos externos -->
+    <link rel="preconnect" href="https://i.imgur.com" crossorigin>
+    <link rel="dns-prefetch" href="//i.imgur.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <meta name="description" content="Descubre joyas y accesorios BMTK: collares, anillos, ropa y más. Calidad premium y envíos a todo el Perú.">
     <title>BMARKET - Ropa y Accesorios Online</title>
     <meta property="og:title" content="BMARKET - Ropa y Accesorios Online">
@@ -18,7 +26,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
 
 /* Tipografía general */
 html, body, button, input, textarea {
@@ -627,13 +635,11 @@ input[type=number] {
         
         <!-- Slide 1 -->
 <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000">
-  <!-- Imagen PC -->
-  <img src="https://i.imgur.com/0gIH4n8.jpeg" alt="Banner 1" 
-       class="hidden sm:block w-full h-full object-cover" decoding="async" loading="eager" fetchpriority="high">
-  
-  <!-- Imagen Móvil -->
-  <img src="https://i.imgur.com/XfYSAb3.jpeg" alt="Banner 1 móvil"
-       class="block sm:hidden w-full h-full object-cover" decoding="async" loading="eager">
+  <!-- Una sola variante por dispositivo para evitar descargas duplicadas -->
+  <picture class="block w-full h-full">
+    <source media="(max-width: 639px)" srcset="https://i.imgur.com/XfYSAb3.jpeg">
+    <img src="https://i.imgur.com/0gIH4n8.jpeg" alt="Banner 1" class="w-full h-full object-cover" decoding="async" loading="eager" fetchpriority="high">
+  </picture>
 
   <div class="absolute inset-0 bg-black bg-opacity-0"></div>
 
@@ -647,13 +653,11 @@ input[type=number] {
         
         <!-- Slide 2 -->
 <div class="hero-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
-  <!-- Imagen PC -->
-  <img src="https://i.imgur.com/IntsUPA.jpeg" alt="Banner 2" 
-       class="hidden sm:block w-full h-full object-cover" decoding="async" loading="lazy">
-  
-  <!-- Imagen Móvil -->
-  <img src="https://i.imgur.com/ucBY0sn.jpeg" alt="Banner 2 móvil"
-       class="block sm:hidden w-full h-full object-cover" decoding="async" loading="lazy">
+  <!-- Una sola variante por dispositivo para evitar descargas duplicadas -->
+  <picture class="block w-full h-full">
+    <source media="(max-width: 639px)" srcset="https://i.imgur.com/ucBY0sn.jpeg">
+    <img src="https://i.imgur.com/IntsUPA.jpeg" alt="Banner 2" class="w-full h-full object-cover" decoding="async" loading="lazy">
+  </picture>
 
   <div class="absolute inset-0 bg-black bg-opacity-0"></div>
 
@@ -668,13 +672,11 @@ input[type=number] {
 
 <!-- Slide 3 -->
 <div class="hero-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
-  <!-- Imagen PC -->
-  <img src="https://i.imgur.com/atMKt97.jpeg" alt="Banner 3"
-       class="hidden sm:block w-full h-full object-cover" decoding="async" loading="lazy">
-  
-  <!-- Imagen Móvil -->
-  <img src="https://i.imgur.com/d7TxgEn.jpeg" alt="Banner 3 móvil"
-       class="block sm:hidden w-full h-full object-cover" decoding="async" loading="lazy">
+  <!-- Una sola variante por dispositivo para evitar descargas duplicadas -->
+  <picture class="block w-full h-full">
+    <source media="(max-width: 639px)" srcset="https://i.imgur.com/d7TxgEn.jpeg">
+    <img src="https://i.imgur.com/atMKt97.jpeg" alt="Banner 3" class="w-full h-full object-cover" decoding="async" loading="lazy">
+  </picture>
 
   <div class="absolute inset-0 bg-black bg-opacity-0"></div>
 
@@ -3526,7 +3528,7 @@ updateCountdown();
         <!-- Galería de Imágenes -->
         <div class="space-y-4">
           <div id="main-image" class="rounded-2xl overflow-hidden max-w-[620px] w-full mx-auto bg-gray-50" style="aspect-ratio: 3 / 4;">
-            <img id="mainImageEl" src="" alt="Producto" class="w-full h-full object-cover transition-transform duration-300" decoding="async" loading="lazy">
+            <img id="mainImageEl" src="" alt="Producto" class="w-full h-full object-cover transition-transform duration-300" decoding="async" loading="eager" fetchpriority="high">
           </div>
             <div class="relative">
     <div id="thumbnails" class="flex flex-nowrap overflow-x-auto md:justify-center md:overflow-x-visible space-x-2 py-2">
@@ -6362,6 +6364,8 @@ function showProductDetail(productId) {
 
     // Imagen principal
     const mainImageEl = document.getElementById('mainImageEl');
+    mainImageEl.loading = 'eager';
+    mainImageEl.fetchPriority = 'high';
     mainImageEl.src = product.images?.[0] || '';
 
     // Miniaturas
@@ -6429,7 +6433,10 @@ function showProductDetail(productId) {
 function changeMainImage(thumbnail) {
     document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
     thumbnail.classList.add('active');
-    document.getElementById('mainImageEl').src = thumbnail.getAttribute('data-image');
+    const mainImageEl = document.getElementById('mainImageEl');
+    mainImageEl.loading = 'eager';
+    mainImageEl.fetchPriority = 'high';
+    mainImageEl.src = thumbnail.getAttribute('data-image');
 }
 
 // =======================
